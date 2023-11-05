@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:task_manager/ui/screens/onboarding/login_screen.dart';
+import 'package:task_manager/ui/style/style.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = "/";
@@ -26,10 +27,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Center(
-          child: SvgPicture.asset("assets/images/logo.svg"),
-        ),
+      body: Stack(
+        children: [
+          screenBackground(context),
+          Center(
+            child: SvgPicture.asset(
+              "assets/images/logo.svg",
+              alignment: Alignment.center,
+            ),
+          )
+        ],
       ),
     );
   }

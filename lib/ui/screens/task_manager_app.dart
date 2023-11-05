@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_manager/ui/screens/onboarding/email_verification_screen.dart';
 import 'package:task_manager/ui/screens/onboarding/login_screen.dart';
 import 'package:task_manager/ui/screens/onboarding/pin_verification_screen.dart';
+import 'package:task_manager/ui/screens/onboarding/registration_screen.dart';
 import 'package:task_manager/ui/screens/onboarding/set_password_screen.dart';
 import 'package:task_manager/ui/screens/onboarding/splash_screen.dart';
 import 'package:task_manager/ui/screens/profile/profile_update_screen.dart';
@@ -18,15 +19,15 @@ class TaskManagerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Task Manager",
-      home: const SplashScreen(),
+      initialRoute: PinVerificationScreen.routeName,
       routes: {
         SplashScreen.routeName: (context) => const SplashScreen(),
         LoginScreen.routeName: (context) => const LoginScreen(),
+        RegistrationScreen.routeName: (context) => RegistrationScreen(),
         EmailVerificationScreen.routeName: (context) =>
-            const EmailVerificationScreen(),
-        PinVerificationScreen.routeName: (context) =>
-            const PinVerificationScreen(),
-        SetPasswordScreen.routeName: (context) => const SetPasswordScreen(),
+            EmailVerificationScreen(),
+        PinVerificationScreen.routeName: (context) => PinVerificationScreen(),
+        SetPasswordScreen.routeName: (context) => SetPasswordScreen(),
         NewTaskListScreen.routeName: (context) => const NewTaskListScreen(),
         ProgressTaskListScreen.routeName: (context) =>
             const ProgressTaskListScreen(),
