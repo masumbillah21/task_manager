@@ -1,14 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/ui/screens/splash_screen.dart';
+import 'package:task_manager/ui/screens/onboarding/email_verification_screen.dart';
+import 'package:task_manager/ui/screens/onboarding/login_screen.dart';
+import 'package:task_manager/ui/screens/onboarding/pin_verification_screen.dart';
+import 'package:task_manager/ui/screens/onboarding/set_password_screen.dart';
+import 'package:task_manager/ui/screens/onboarding/splash_screen.dart';
+import 'package:task_manager/ui/screens/profile/profile_update_screen.dart';
+import 'package:task_manager/ui/screens/tasks/cancelled_task_list_screen.dart';
+import 'package:task_manager/ui/screens/tasks/completed_task_list_screen.dart';
+import 'package:task_manager/ui/screens/tasks/new_task_list_screen.dart';
+import 'package:task_manager/ui/screens/tasks/progress_task_list_screen.dart';
+import 'package:task_manager/ui/screens/tasks/task_create_screen.dart';
 
 class TaskManagerApp extends StatelessWidget {
   const TaskManagerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Task Manager",
-      home: SplashScreen(),
+      home: const SplashScreen(),
+      routes: {
+        SplashScreen.routeName: (context) => const SplashScreen(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
+        EmailVerificationScreen.routeName: (context) =>
+            const EmailVerificationScreen(),
+        PinVerificationScreen.routeName: (context) =>
+            const PinVerificationScreen(),
+        SetPasswordScreen.routeName: (context) => const SetPasswordScreen(),
+        NewTaskListScreen.routeName: (context) => const NewTaskListScreen(),
+        ProgressTaskListScreen.routeName: (context) =>
+            const ProgressTaskListScreen(),
+        CompletedTaskListScreen.routeName: (context) =>
+            const CompletedTaskListScreen(),
+        CancelledTaskListScreen.routeName: (context) =>
+            const CancelledTaskListScreen(),
+        TaskCreateScreen.routeName: (context) => const TaskCreateScreen(),
+        ProfileUpdateScreen.routeName: (context) => const ProfileUpdateScreen(),
+      },
     );
   }
 }
