@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:task_manager/ui/style/style.dart';
 import 'package:task_manager/ui/widgets/custom_container.dart';
 
-class SetPasswordScreen extends StatelessWidget {
+class SetPasswordScreen extends StatefulWidget {
   static const routeName = "./set-password";
-  SetPasswordScreen({super.key});
+  const SetPasswordScreen({super.key});
+
+  @override
+  State<SetPasswordScreen> createState() => _SetPasswordScreenState();
+}
+
+class _SetPasswordScreenState extends State<SetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

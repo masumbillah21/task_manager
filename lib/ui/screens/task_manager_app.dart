@@ -19,11 +19,11 @@ class TaskManagerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Task Manager",
-      initialRoute: PinVerificationScreen.routeName,
+      initialRoute: SplashScreen.routeName,
       routes: {
         SplashScreen.routeName: (context) => const SplashScreen(),
         LoginScreen.routeName: (context) => const LoginScreen(),
-        RegistrationScreen.routeName: (context) => RegistrationScreen(),
+        RegistrationScreen.routeName: (context) => const RegistrationScreen(),
         EmailVerificationScreen.routeName: (context) =>
             EmailVerificationScreen(),
         PinVerificationScreen.routeName: (context) => PinVerificationScreen(),
