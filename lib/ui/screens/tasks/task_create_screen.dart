@@ -8,10 +8,7 @@ class TaskCreateScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Task Manager'),
-      ),
-      body: CustomContainer(
+      body: const CustomContainer(
         child: Center(),
       ),
     );

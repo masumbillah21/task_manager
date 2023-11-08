@@ -39,6 +39,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   @override
+  void dispose() {
+    _emailTEController.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomContainer(
@@ -89,7 +95,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                             SizedBox(
                               child: ElevatedButton(
                                 style: appButtonStyle(),
-                                child: successButtonChild("Next"),
+                                child: successButtonChild(buttonText: "Next"),
                                 onPressed: () {
                                   verifyEmail(context);
                                 },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/ui/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/ui/screens/onboarding/email_verification_screen.dart';
 import 'package:task_manager/ui/screens/onboarding/login_screen.dart';
 import 'package:task_manager/ui/screens/onboarding/pin_verification_screen.dart';
@@ -25,9 +26,12 @@ class TaskManagerApp extends StatelessWidget {
         LoginScreen.routeName: (context) => const LoginScreen(),
         RegistrationScreen.routeName: (context) => const RegistrationScreen(),
         EmailVerificationScreen.routeName: (context) =>
-            EmailVerificationScreen(),
-        PinVerificationScreen.routeName: (context) => PinVerificationScreen(),
-        SetPasswordScreen.routeName: (context) => SetPasswordScreen(),
+            const EmailVerificationScreen(),
+        PinVerificationScreen.routeName: (context) =>
+            const PinVerificationScreen(),
+        SetPasswordScreen.routeName: (context) => const SetPasswordScreen(),
+        BottomNavigationScreen.routeName: (context) =>
+            const BottomNavigationScreen(),
         NewTaskListScreen.routeName: (context) => const NewTaskListScreen(),
         ProgressTaskListScreen.routeName: (context) =>
             const ProgressTaskListScreen(),

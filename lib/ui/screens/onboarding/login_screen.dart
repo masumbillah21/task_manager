@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/ui/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/ui/screens/onboarding/email_verification_screen.dart';
 import 'package:task_manager/ui/screens/onboarding/registration_screen.dart';
-import 'package:task_manager/ui/screens/tasks/new_task_list_screen.dart';
 import 'package:task_manager/ui/style/style.dart';
 import 'package:task_manager/ui/widgets/custom_container.dart';
 
@@ -32,13 +32,20 @@ class _LoginScreenState extends State<LoginScreen> {
       bool res = await ApiClient().loginRequest(_formValue);
       if (res) {
         Navigator.pushNamedAndRemoveUntil(
-            context, NewTaskListScreen.routeName, (route) => false);
+            context, BottomNavigationScreen.routeName, (route) => false);
       }
     }
 
     setState(() {
       _inProgress = false;
     });
+  }
+
+  @override
+  void dispose() {
+    _emailTEController.clear();
+    _passwordTEController.clear();
+    super.dispose();
   }
 
   @override
@@ -109,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               child: ElevatedButton(
                                 style: appButtonStyle(),
-                                child: successButtonChild("Login"),
+                                child: successButtonChild(),
                                 onPressed: () {
                                   login(context);
                                 },

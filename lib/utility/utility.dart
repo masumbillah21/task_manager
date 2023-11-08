@@ -5,9 +5,9 @@ Future<void> storeUserData(key, email) async {
   await prefs.setString(key, email);
 }
 
-Future<String?> getUserData(key) async {
+Future<String> getUserData(key) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString(key);
+  return prefs.getString(key) ?? '';
 }
 
 Future<bool?> deleteData(key) async {

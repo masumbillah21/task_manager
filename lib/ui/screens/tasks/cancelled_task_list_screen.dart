@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/ui/widgets/custom_container.dart';
+import 'package:task_manager/ui/widgets/task_list_card.dart';
 
 class CancelledTaskListScreen extends StatelessWidget {
   static const routeName = "./cancel-task";
@@ -8,11 +8,9 @@ class CancelledTaskListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Task Manager'),
-      ),
-      body: CustomContainer(
-        child: Center(),
+      body: ListView.builder(
+        itemCount: 9,
+        itemBuilder: (context, index) => const TaskListCard(),
       ),
     );
   }

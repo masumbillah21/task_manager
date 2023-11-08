@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/ui/widgets/custom_container.dart';
+import 'package:task_manager/ui/widgets/task_list_card.dart';
 
 class ProgressTaskListScreen extends StatelessWidget {
   static const routeName = "./progress-task";
@@ -8,13 +8,10 @@ class ProgressTaskListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Task Manager'),
-      ),
-      body: const CustomContainer(
-        child: Center(),
+      body: ListView.builder(
+        itemCount: 9,
+        itemBuilder: (context, index) => const TaskListCard(),
       ),
     );
-    ;
   }
 }

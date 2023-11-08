@@ -16,12 +16,13 @@ class ApiClient {
           await http.post(url, headers: requestHeader, body: postBody);
       var resData = jsonDecode(response.body);
       if (response.statusCode == 200 && resData['status'] == 'success') {
+        String photo = utf8.decode(base64Url.decode(resData['data']['photo']));
         await storeUserData('token', resData['token']);
         await storeUserData('email', resData['data']['email']);
         await storeUserData('firstName', resData['data']['firstName']);
         await storeUserData('lastName', resData['data']['lastName']);
         await storeUserData('mobile', resData['data']['mobile']);
-        await storeUserData('photo', resData['data']['photo']);
+        await storeUserData('photo', photo);
         successToast("Login Success");
         return true;
       } else {
@@ -61,15 +62,15 @@ class ApiClient {
       var response = await http.get(url, headers: requestHeader);
       var resData = jsonDecode(response.body);
       if (response.statusCode == 200 && resData['status'] == 'success') {
-        successToast("Email Verification Success");
+        successToast("PIN Sent Success");
         await storeUserData('email', email);
         return true;
       } else {
-        errorToast("Email Verification Failed! Try again");
+        errorToast("Pin Sent Failed! Try again");
         return false;
       }
     } catch (_) {
-      errorToast("Email Verification Failed! Try again");
+      errorToast("Pin Sent Failed! Try again");
       return false;
     }
   }
@@ -80,16 +81,17 @@ class ApiClient {
     try {
       var response = await http.get(url, headers: requestHeader);
       var resData = jsonDecode(response.body);
+
       if (response.statusCode == 200 && resData['status'] == 'success') {
-        successToast("OTP Verification Success");
+        successToast("OTP Verification Success.");
         await storeUserData('otp', otp);
         return true;
       } else {
-        errorToast("OTP Verification Failed! Try again");
+        errorToast("OTP Verification Failed! Try again.");
         return false;
       }
     } catch (_) {
-      errorToast("OTP Verification Failed! Try again");
+      errorToast("OTP Verification Failed! Try again.");
       return false;
     }
   }

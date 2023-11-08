@@ -135,17 +135,21 @@ TextStyle buttonTextStyle() {
   );
 }
 
-Ink successButtonChild(String buttonText) {
+Ink successButtonChild({String buttonText = ''}) {
   return Ink(
     decoration: BoxDecoration(
-        color: colorGreen, borderRadius: BorderRadius.circular(6)),
+      color: colorGreen,
+      borderRadius: BorderRadius.circular(6),
+    ),
     child: Container(
       height: 45,
       alignment: Alignment.center,
-      child: Text(
-        buttonText,
-        style: buttonTextStyle(),
-      ),
+      child: buttonText.isEmpty
+          ? const Icon(Icons.arrow_circle_right_outlined)
+          : Text(
+              buttonText,
+              style: buttonTextStyle(),
+            ),
     ),
   );
 }

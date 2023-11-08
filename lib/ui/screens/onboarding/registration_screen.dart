@@ -52,6 +52,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   @override
+  void dispose() {
+    _emailTEController.clear();
+    _firstNameTEController.clear();
+    _lastNameTEController.clear();
+    _mobileTEController.clear();
+    _passwordTEController.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomContainer(
@@ -150,7 +160,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             SizedBox(
                               child: ElevatedButton(
                                 style: appButtonStyle(),
-                                child: successButtonChild("Sign Up"),
+                                child: successButtonChild(),
                                 onPressed: () {
                                   registration(context);
                                 },
