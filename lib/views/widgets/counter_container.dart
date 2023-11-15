@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/ui/style/style.dart';
+import 'package:task_manager/views/style/style.dart';
 
 class CounterContainer extends StatelessWidget {
   final int taskNumber;

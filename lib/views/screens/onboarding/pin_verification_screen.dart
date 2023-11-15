@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/api/api_client.dart';
-import 'package:task_manager/ui/screens/onboarding/set_password_screen.dart';
-import 'package:task_manager/ui/style/style.dart';
-import 'package:task_manager/ui/widgets/custom_container.dart';
 import 'package:task_manager/utility/utility.dart';
+import 'package:task_manager/views/screens/onboarding/set_password_screen.dart';
+import 'package:task_manager/views/style/style.dart';
+import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class PinVerificationScreen extends StatefulWidget {
   static const routeName = "./pin-verification";
@@ -48,7 +48,7 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomContainer(
+      body: TaskBackgroundContainer(
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(30),

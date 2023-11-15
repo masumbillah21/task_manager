@@ -13,7 +13,7 @@ const colorDarkBlue = Color.fromRGBO(44, 62, 80, 1.0);
 const colorLightGray = Color.fromRGBO(135, 142, 150, 1.0);
 const colorLight = Color.fromRGBO(211, 211, 211, 1.0);
 
-SizedBox itemSizeBox(child) {
+SizedBox itemSizeBox({child}) {
   return SizedBox(
     width: double.infinity,
     child: Container(
@@ -84,18 +84,20 @@ InputDecoration appInputDecoration(label) {
         borderSide: BorderSide(color: colorWhite, width: 0.0),
       ),
       border: const OutlineInputBorder(),
-      labelText: label);
+      labelText: label,
+      alignLabelWithHint: true);
 }
 
 DecoratedBox appDropDownStyle(child) {
   return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.white, width: 1),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Padding(
-          padding: const EdgeInsets.only(left: 30, right: 30), child: child));
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: Colors.white, width: 1),
+      borderRadius: BorderRadius.circular(4),
+    ),
+    child: Padding(
+        padding: const EdgeInsets.only(left: 30, right: 30), child: child),
+  );
 }
 
 SvgPicture screenBackground(context) {
@@ -150,26 +152,6 @@ Ink successButtonChild({String buttonText = ''}) {
               buttonText,
               style: buttonTextStyle(),
             ),
-    ),
-  );
-}
-
-Container statusChild(statusText, statusColor) {
-  return Container(
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(20),
-      color: statusColor,
-    ),
-    height: 20,
-    width: 60,
-    child: Text(
-      statusText,
-      style: const TextStyle(
-        color: colorWhite,
-        fontSize: 10,
-        fontWeight: FontWeight.w400,
-      ),
     ),
   );
 }

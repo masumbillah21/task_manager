@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_client.dart';
-import 'package:task_manager/ui/screens/onboarding/login_screen.dart';
-import 'package:task_manager/ui/screens/onboarding/pin_verification_screen.dart';
-import 'package:task_manager/ui/style/style.dart';
-import 'package:task_manager/ui/widgets/custom_container.dart';
+import 'package:task_manager/utility/urls.dart';
+import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
+import 'package:task_manager/views/screens/onboarding/email_verification_screen.dart';
+import 'package:task_manager/views/screens/onboarding/registration_screen.dart';
+import 'package:task_manager/views/style/style.dart';
+import 'package:task_manager/views/widgets/task_background_container.dart';
 
-class EmailVerificationScreen extends StatefulWidget {
-  static const routeName = "./email-verification";
-  const EmailVerificationScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  static const routeName = './login';
+  const LoginScreen({super.key});
 
   @override
-  State<EmailVerificationScreen> createState() =>
-      _EmailVerificationScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _emailTEController = TextEditingController();
-
+  final TextEditingController _passwordTEController = TextEditingController();
   bool _inProgress = false;
+  final Map<String, String> _formValue = {'email': '', 'password': ''};
 
-  Future<void> verifyEmail(context) async {
+  Future<void> login(context) async {
     setState(() {
       _inProgress = true;
     });
     if (_formKey.currentState!.validate()) {
-      bool res = await ApiClient().verifyEmailRequest(_emailTEController.text);
+      _formValue.update('email', (value) => _emailTEController.text);
+      _formValue.update('password', (value) => _passwordTEController.text);
+
+      bool res = await ApiClient()
+          .loginAndRegistration(formValue: _formValue, url: Urls.login);
       if (res) {
-        Navigator.pushReplacementNamed(
-            context, PinVerificationScreen.routeName);
+        Navigator.pushNamedAndRemoveUntil(
+            context, BottomNavigationScreen.routeName, (route) => false);
       }
     }
 
@@ -41,13 +46,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   void dispose() {
     _emailTEController.clear();
+    _passwordTEController.clear();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomContainer(
+      body: TaskBackgroundContainer(
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(30),
@@ -57,22 +63,23 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 )
               : SingleChildScrollView(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Form(
                         key: _formKey,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Your Email Address",
+                              "Get Started With",
                               style: head1Text(colorDarkBlue),
                             ),
                             const SizedBox(
                               height: 1,
                             ),
                             Text(
-                              "A 6 digit verification pin will send to your email address",
+                              "Welcome to task manager",
                               style: head6Text(colorLightGray),
                             ),
                             const SizedBox(
@@ -84,7 +91,23 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Email is required';
+                                  return 'Email required.';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: _passwordTEController,
+                              decoration: appInputDecoration("Password"),
+                              obscureText: true,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Password required.';
+                                } else if (int.parse(value) < 8) {
+                                  return 'Password must be at least 8 characters long.';
                                 }
                                 return null;
                               },
@@ -95,12 +118,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                             SizedBox(
                               child: ElevatedButton(
                                 style: appButtonStyle(),
-                                child: successButtonChild(buttonText: "Next"),
+                                child: successButtonChild(),
                                 onPressed: () {
-                                  verifyEmail(context);
+                                  login(context);
                                 },
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ),
@@ -111,17 +134,35 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         width: MediaQuery.sizeOf(context).width,
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, LoginScreen.routeName);
+                            Navigator.pushNamed(
+                                context, EmailVerificationScreen.routeName);
+                          },
+                          child: Text(
+                            "Forgot password?",
+                            style: head6Text(colorLightGray),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, RegistrationScreen.routeName);
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Already have account?",
+                                "Don't have account?",
                                 style: head6Text(colorLightGray),
                               ),
                               Text(
-                                " Login",
+                                " Sign Up",
                                 style: head6Text(colorGreen),
                               ),
                             ],

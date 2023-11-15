@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:task_manager/ui/screens/bottom_navigation_screen.dart';
-import 'package:task_manager/ui/screens/onboarding/login_screen.dart';
-import 'package:task_manager/ui/style/style.dart';
-import 'package:task_manager/utility/utility.dart';
+import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
+import 'package:task_manager/views/screens/onboarding/login_screen.dart';
+import 'package:task_manager/views/style/style.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = "/";
@@ -17,16 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   bool _isLogin = false;
 
   Future<void> isLogin() async {
-    String? token = await getUserData('token');
-    if (token != null && token.isNotEmpty) {
-      setState(() {
-        _isLogin = true;
-      });
-    } else {
-      setState(() {
-        _isLogin = false;
-      });
-    }
+    _isLogin = await AuthController.checkAuthState();
   }
 
   @override

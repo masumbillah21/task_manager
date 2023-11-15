@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_client.dart';
-import 'package:task_manager/ui/screens/onboarding/login_screen.dart';
-import 'package:task_manager/ui/style/style.dart';
-import 'package:task_manager/ui/widgets/custom_container.dart';
 import 'package:task_manager/utility/utility.dart';
+import 'package:task_manager/views/screens/onboarding/login_screen.dart';
+import 'package:task_manager/views/style/style.dart';
+import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class SetPasswordScreen extends StatefulWidget {
   static const routeName = "./set-password";
@@ -48,7 +48,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomContainer(
+      body: TaskBackgroundContainer(
         child: Container(
           padding: const EdgeInsets.all(30),
           child: Form(

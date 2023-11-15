@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_client.dart';
-import 'package:task_manager/ui/screens/onboarding/login_screen.dart';
-import 'package:task_manager/ui/style/style.dart';
-import 'package:task_manager/ui/widgets/custom_container.dart';
+import 'package:task_manager/utility/urls.dart';
+import 'package:task_manager/views/screens/onboarding/login_screen.dart';
+import 'package:task_manager/views/style/style.dart';
+import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const routeName = "./registration";
@@ -40,7 +41,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       _formValue.update('mobile', (value) => _mobileTEController.text);
       _formValue.update('password', (value) => _passwordTEController.text);
 
-      bool res = await ApiClient().registrationRequest(_formValue);
+      bool res = await ApiClient()
+          .loginAndRegistration(formValue: _formValue, url: Urls.registration);
       if (res) {
         Navigator.pushReplacementNamed(context, LoginScreen.routeName);
       }
@@ -64,7 +66,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomContainer(
+      body: TaskBackgroundContainer(
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(30),

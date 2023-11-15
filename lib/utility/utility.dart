@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> storeUserData(key, email) async {
@@ -10,7 +12,8 @@ Future<String> getUserData(key) async {
   return prefs.getString(key) ?? '';
 }
 
-Future<bool?> deleteData(key) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.remove(key);
+showBase64Image(image) {
+  UriData? data = Uri.parse(image).data;
+  Uint8List myImage = data!.contentAsBytes();
+  return myImage;
 }

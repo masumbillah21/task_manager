@@ -1,38 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_client.dart';
-import 'package:task_manager/ui/screens/bottom_navigation_screen.dart';
-import 'package:task_manager/ui/screens/onboarding/email_verification_screen.dart';
-import 'package:task_manager/ui/screens/onboarding/registration_screen.dart';
-import 'package:task_manager/ui/style/style.dart';
-import 'package:task_manager/ui/widgets/custom_container.dart';
+import 'package:task_manager/views/screens/onboarding/login_screen.dart';
+import 'package:task_manager/views/screens/onboarding/pin_verification_screen.dart';
+import 'package:task_manager/views/style/style.dart';
+import 'package:task_manager/views/widgets/task_background_container.dart';
 
-class LoginScreen extends StatefulWidget {
-  static const routeName = './login';
-  const LoginScreen({super.key});
+class EmailVerificationScreen extends StatefulWidget {
+  static const routeName = "./email-verification";
+  const EmailVerificationScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<EmailVerificationScreen> createState() =>
+      _EmailVerificationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _passwordTEController = TextEditingController();
-  bool _inProgress = false;
-  final Map<String, String> _formValue = {'email': '', 'password': ''};
 
-  Future<void> login(context) async {
+  final TextEditingController _emailTEController = TextEditingController();
+
+  bool _inProgress = false;
+
+  Future<void> verifyEmail(context) async {
     setState(() {
       _inProgress = true;
     });
     if (_formKey.currentState!.validate()) {
-      _formValue.update('email', (value) => _emailTEController.text);
-      _formValue.update('password', (value) => _passwordTEController.text);
-
-      bool res = await ApiClient().loginRequest(_formValue);
+      bool res = await ApiClient().verifyEmailRequest(_emailTEController.text);
       if (res) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, BottomNavigationScreen.routeName, (route) => false);
+        Navigator.pushReplacementNamed(
+            context, PinVerificationScreen.routeName);
       }
     }
 
@@ -44,14 +41,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _emailTEController.clear();
-    _passwordTEController.clear();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomContainer(
+      body: TaskBackgroundContainer(
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(30),
@@ -61,23 +57,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 )
               : SingleChildScrollView(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Form(
                         key: _formKey,
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Get Started With",
+                              "Your Email Address",
                               style: head1Text(colorDarkBlue),
                             ),
                             const SizedBox(
                               height: 1,
                             ),
                             Text(
-                              "Welcome to task manager",
+                              "A 6 digit verification pin will send to your email address",
                               style: head6Text(colorLightGray),
                             ),
                             const SizedBox(
@@ -89,23 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Email required.';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              controller: _passwordTEController,
-                              decoration: appInputDecoration("Password"),
-                              obscureText: true,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Password required.';
-                                } else if (int.parse(value) < 8) {
-                                  return 'Password must be at least 8 characters long.';
+                                  return 'Email is required';
                                 }
                                 return null;
                               },
@@ -116,12 +95,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               child: ElevatedButton(
                                 style: appButtonStyle(),
-                                child: successButtonChild(),
+                                child: successButtonChild(buttonText: "Next"),
                                 onPressed: () {
-                                  login(context);
+                                  verifyEmail(context);
                                 },
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -132,35 +111,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: MediaQuery.sizeOf(context).width,
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushNamed(
-                                context, EmailVerificationScreen.routeName);
-                          },
-                          child: Text(
-                            "Forgot password?",
-                            style: head6Text(colorLightGray),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.sizeOf(context).width,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, RegistrationScreen.routeName);
+                            Navigator.pushNamed(context, LoginScreen.routeName);
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Don't have account?",
+                                "Already have account?",
                                 style: head6Text(colorLightGray),
                               ),
                               Text(
-                                " Sign Up",
+                                " Login",
                                 style: head6Text(colorGreen),
                               ),
                             ],
