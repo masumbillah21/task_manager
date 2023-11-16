@@ -27,8 +27,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     if (_formKey.currentState!.validate()) {
       String? email = await getUserData('email');
       String? otp = await getUserData('otp');
-      _formValue.update('OTP', (value) => otp!);
-      _formValue.update('email', (value) => email!);
+      _formValue.update('OTP', (value) => otp);
+      _formValue.update('email', (value) => email);
       _formValue.update('password', (value) => _passwordTEController.text);
 
       bool res = await ApiClient().setPasswordRequest(_formValue);

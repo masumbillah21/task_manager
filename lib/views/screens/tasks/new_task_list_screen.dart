@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager/api/api_client.dart';
 import 'package:task_manager/models/task_model.dart';
 import 'package:task_manager/views/screens/tasks/task_create_screen.dart';
@@ -25,6 +26,8 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
         _isLoading = true;
       });
     }
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    print("User: ${sp.getString('user')}");
     List tasks = await ApiClient().getTaskList('New');
     List<TaskModel> taskData = [];
     if (tasks.isNotEmpty) {
@@ -40,6 +43,37 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
     }
   }
 
+  Future<void> _deleteTask(String id) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Warning'),
+          content: const Text('Do you really want to delete this task?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                await ApiClient().deleteTaskList(id);
+                if (mounted) {
+                  Navigator.of(context).pop();
+                  _getTakList();
+                }
+              },
+            ),
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     _getTakList();
@@ -53,8 +87,8 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: colorGreen,
           onPressed: () {
-            Navigator.pushNamed(context, TaskCreateScreen.routeName)
-                .then((_) => _getTakList());
+            Navigator.pushNamed(context, TaskCreateScreen.routeName,
+                arguments: {}).then((_) => _getTakList());
           },
           child: const Icon(Icons.add),
         ),
@@ -104,6 +138,7 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
                               child: ListView.builder(
                                 itemCount: _taskList.length,
                                 itemBuilder: (context, index) => TaskListCard(
+                                  deleteTask: _deleteTask,
                                   taskList: _taskList[index],
                                 ),
                               ),

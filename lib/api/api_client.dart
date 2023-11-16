@@ -16,16 +16,19 @@ class ApiClient {
   }) async {
     var uri = Uri.parse(url);
     var postBody = jsonEncode(formValue);
+
     String msg = "Something went wrong! Try again later.";
+
     try {
       var response =
           await http.post(uri, headers: requestHeader, body: postBody);
       var resData = jsonDecode(response.body);
+
       if (response.statusCode == 200 && resData['status'] == 'success') {
         if (url == Urls.login) {
           AuthController.saveUserInfo(
-            resData['token'],
-            UserModel.fromJson(resData['data']),
+            userToken: resData['token'],
+            model: UserModel.fromJson(resData['data']),
           );
           msg = 'Login Success';
         } else if (url == Urls.registration) {
@@ -34,11 +37,11 @@ class ApiClient {
         successToast(msg);
         return true;
       } else {
-        errorToast(msg);
+        errorToast("else");
         return false;
       }
     } catch (err) {
-      errorToast(msg);
+      errorToast("catch");
       return false;
     }
   }
@@ -104,6 +107,36 @@ class ApiClient {
     }
   }
 
+  Future<bool> updateUserProfile(formValue) async {
+    var url = Uri.parse(Urls.profileUpdate);
+    String? userToken = AuthController.token;
+    var postBody = jsonEncode(formValue);
+    var requestHeaderWithToken = {
+      "Content-Type": "application/json",
+      "token": userToken!
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: requestHeaderWithToken,
+        body: postBody,
+      );
+
+      var resData = jsonDecode(response.body);
+      if (response.statusCode == 200 && resData['status'] == 'success') {
+        AuthController.saveUserInfo(userToken: userToken, model: formValue);
+        successToast("Profile Update Success");
+        return true;
+      } else {
+        errorToast("Profile Update Failed! Try again");
+        return false;
+      }
+    } catch (_) {
+      errorToast("Profile Update Failed! Try again");
+      return false;
+    }
+  }
+
   Future<bool> createTask(formValue) async {
     var url = Uri.parse(Urls.createTask);
     var postBody = jsonEncode(formValue);
@@ -152,7 +185,7 @@ class ApiClient {
     }
   }
 
-  Future<bool> editTaskList(String id, String status) async {
+  Future<bool> updateTaskStatus(String id, String status) async {
     var url = Uri.parse("${Urls.updateTaskStatus}/$id/$status");
     String? userToken = AuthController.token;
     var requestHeaderWithToken = {

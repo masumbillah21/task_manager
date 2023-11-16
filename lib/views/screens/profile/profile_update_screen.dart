@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/views/style/style.dart';
+import 'package:task_manager/views/widgets/profile_image_picker.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
@@ -15,13 +21,15 @@ class ProfileUpdateScreen extends StatefulWidget {
 class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
   final ImagePicker picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
+  File? _imageFile;
+  bool _inProgress = false;
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
 
-  void showPhotoDialogBox() {
+  void _showPhotoDialogBox() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -49,8 +57,18 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
               title: const Text('Take Photo'),
               onTap: () async {
                 // Capture a photo.
-                final XFile? photo =
-                    await picker.pickImage(source: ImageSource.camera);
+                final XFile? photo = await picker.pickImage(
+                  source: ImageSource.camera,
+                  maxHeight: 400,
+                  maxWidth: 400,
+                );
+
+                if (mounted) {
+                  setState(() {
+                    _imageFile = File(photo!.path);
+                  });
+                  Navigator.pop(context);
+                }
               },
             ),
             ListTile(
@@ -58,14 +76,57 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
               title: const Text('Upload from gallery'),
               onTap: () async {
                 // Pick an image.
-                final XFile? image =
-                    await picker.pickImage(source: ImageSource.gallery);
+                final XFile? image = await picker.pickImage(
+                  source: ImageSource.gallery,
+                  maxHeight: 400,
+                  maxWidth: 400,
+                );
+                if (mounted) {
+                  setState(() {
+                    _imageFile = _imageFile = File(image!.path);
+                    ;
+                  });
+                  Navigator.pop(context);
+                }
               },
             )
           ],
         ),
       ),
     );
+  }
+
+  Future<void> updateProfile() async {
+    if (mounted) {
+      setState(() {
+        _inProgress = true;
+      });
+    }
+    UserModel formValue = UserModel(
+      email: _emailTEController.text.trim(),
+      firstName: _firstNameTEController.text.trim(),
+      lastName: _lastNameTEController.text.trim(),
+      mobile: _mobileTEController.text.trim(),
+      password: _passwordTEController.text,
+      photo: _imageFile,
+    );
+    await ApiClient().updateUserProfile(formValue);
+
+    if (mounted) {
+      setState(() {
+        _inProgress = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    var user = AuthController.user;
+    _emailTEController.text = user?.email ?? '';
+    _firstNameTEController.text = user?.firstName ?? '';
+    _lastNameTEController.text = user?.lastName ?? '';
+    _mobileTEController.text = user?.mobile ?? '';
+    super.initState();
   }
 
   @override
@@ -101,45 +162,9 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  GestureDetector(
-                    onTap: showPhotoDialogBox,
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: colorWhite,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: 50,
-                              width: 10,
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  bottomLeft: Radius.circular(10),
-                                ),
-                                color: colorLightGray,
-                              ),
-                              child: const Text(
-                                "Photo",
-                                style: TextStyle(color: colorWhite),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Container(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: const Text("Photo url"),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  ProfileImagePicker(
+                    onTab: _showPhotoDialogBox,
+                    photoLink: _imageFile,
                   ),
                   const SizedBox(
                     height: 20,
@@ -214,12 +239,16 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                     height: 20,
                   ),
                   SizedBox(
-                    child: ElevatedButton(
-                      style: appButtonStyle(),
-                      child: successButtonChild(),
-                      onPressed: () {
-                        // TODO: Profile Update
-                      },
+                    child: Visibility(
+                      visible: _inProgress == false,
+                      replacement: const CircularProgressIndicator(),
+                      child: ElevatedButton(
+                        style: appButtonStyle(),
+                        child: successButtonChild(),
+                        onPressed: () {
+                          updateProfile();
+                        },
+                      ),
                     ),
                   )
                 ],

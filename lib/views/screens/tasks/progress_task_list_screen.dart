@@ -34,6 +34,36 @@ class _ProgressTaskListScreenState extends State<ProgressTaskListScreen> {
     });
   }
 
+  Future<void> _deleteTask(String id) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Warning'),
+          content: const Text('Do you really want to delete this task?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                await ApiClient().deleteTaskList(id);
+                if (mounted) {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     _getTakList();
@@ -59,6 +89,7 @@ class _ProgressTaskListScreenState extends State<ProgressTaskListScreen> {
                   : ListView.builder(
                       itemCount: _taskList.length,
                       itemBuilder: (context, index) => TaskListCard(
+                        deleteTask: _deleteTask,
                         taskList: _taskList[index],
                       ),
                     ),

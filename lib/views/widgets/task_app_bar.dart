@@ -37,7 +37,10 @@ class _TaskAppBarState extends State<TaskAppBar> {
               Navigator.pushNamed(context, ProfileUpdateScreen.routeName);
             }
           },
-          leading: const CircleAvatar(),
+          leading: const CircleAvatar(
+            backgroundColor: colorWhite,
+            backgroundImage: AssetImage('assets/images/placeholder.png'),
+          ),
           title: Text(
             fullName,
             style: const TextStyle(color: Colors.white),

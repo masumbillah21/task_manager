@@ -1,16 +1,16 @@
 class TaskModel {
-  String id;
+  String? id;
   String title;
   String description;
   String status;
-  String createdDate;
+  String? createdDate;
 
   TaskModel({
-    required this.id,
+    this.id,
     required this.title,
     required this.description,
     required this.status,
-    required this.createdDate,
+    this.createdDate,
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> task) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/models/task_model.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
@@ -17,23 +18,19 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _subjectTEController = TextEditingController();
   final TextEditingController _desTEController = TextEditingController();
-  final Map<String, String> _formData = {
-    "title": "",
-    "description": "",
-    "status": "New"
-  };
-
   bool _inProgress = false;
-  bool _newTask = true;
 
   Future<void> _createNewTask(context) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _inProgress = true;
       });
-      _formData.update('title', (value) => _subjectTEController.text);
-      _formData.update('description', (value) => _desTEController.text);
-      bool res = await ApiClient().createTask(_formData);
+      TaskModel formData = TaskModel(
+          title: _subjectTEController.text.trim(),
+          description: _desTEController.text.trim(),
+          status: 'New',
+          createdDate: '');
+      bool res = await ApiClient().createTask(formData.toJson());
       if (res) {
         _subjectTEController.clear();
         _desTEController.clear();
@@ -54,8 +51,6 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //final routes = ModalRoute.of(context)!.settings.arguments as Task;
-
     return Scaffold(
       appBar: const TaskAppBar(),
       body: TaskBackgroundContainer(
@@ -73,7 +68,7 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _newTask ? "Add New Task" : "Update Task",
+                          "Add New Task",
                           style: head1Text(colorDarkBlue),
                         ),
                         const SizedBox(

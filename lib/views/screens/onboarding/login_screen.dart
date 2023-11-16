@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/views/screens/onboarding/email_verification_screen.dart';
@@ -20,18 +21,19 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   bool _inProgress = false;
-  final Map<String, String> _formValue = {'email': '', 'password': ''};
 
   Future<void> login(context) async {
     setState(() {
       _inProgress = true;
     });
     if (_formKey.currentState!.validate()) {
-      _formValue.update('email', (value) => _emailTEController.text);
-      _formValue.update('password', (value) => _passwordTEController.text);
+      UserModel formValue = UserModel(
+        email: _emailTEController.text.trim(),
+        password: _passwordTEController.text,
+      );
 
       bool res = await ApiClient()
-          .loginAndRegistration(formValue: _formValue, url: Urls.login);
+          .loginAndRegistration(formValue: formValue.toJson(), url: Urls.login);
       if (res) {
         Navigator.pushNamedAndRemoveUntil(
             context, BottomNavigationScreen.routeName, (route) => false);
