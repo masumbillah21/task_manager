@@ -31,9 +31,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   };
 
   Future<void> registration(context) async {
-    setState(() {
-      _inProgress = true;
-    });
+    if (mounted) {
+      setState(() {
+        _inProgress = true;
+      });
+    }
     if (_formKey.currentState!.validate()) {
       _formValue.update('email', (value) => _emailTEController.text);
       _formValue.update('firstName', (value) => _firstNameTEController.text);
@@ -48,9 +50,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       }
     }
 
-    setState(() {
-      _inProgress = false;
-    });
+    if (mounted) {
+      setState(() {
+        _inProgress = false;
+      });
+    }
   }
 
   @override
@@ -70,134 +74,136 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(30),
-          child: _inProgress
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : SingleChildScrollView(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Form(
+                  key: _formKey,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Join With Us",
-                              style: head1Text(colorDarkBlue),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              controller: _emailTEController,
-                              decoration: appInputDecoration("Email Address"),
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Email is required.';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              controller: _firstNameTEController,
-                              decoration: appInputDecoration("First Name"),
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'First name is required.';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              controller: _lastNameTEController,
-                              decoration: appInputDecoration("Last Name"),
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Last name is required.';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              controller: _mobileTEController,
-                              decoration: appInputDecoration("Mobile Number"),
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Mobile is required.';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              controller: _passwordTEController,
-                              decoration: appInputDecoration("Password"),
-                              obscureText: true,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Password required.';
-                                } else if (int.parse(value) < 8) {
-                                  return 'Password must be at least 8 characters long.';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            SizedBox(
-                              child: ElevatedButton(
-                                style: appButtonStyle(),
-                                child: successButtonChild(),
-                                onPressed: () {
-                                  registration(context);
-                                },
-                              ),
-                            )
-                          ],
-                        ),
+                      Text(
+                        "Join With Us",
+                        style: head1Text(colorDarkBlue),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        controller: _emailTEController,
+                        decoration: appInputDecoration("Email Address"),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Email is required.';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        controller: _firstNameTEController,
+                        decoration: appInputDecoration("First Name"),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'First name is required.';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        controller: _lastNameTEController,
+                        decoration: appInputDecoration("Last Name"),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Last name is required.';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        controller: _mobileTEController,
+                        decoration: appInputDecoration("Mobile Number"),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Mobile is required.';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        controller: _passwordTEController,
+                        decoration: appInputDecoration("Password"),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Password required.';
+                          } else if (int.parse(value) < 8) {
+                            return 'Password must be at least 8 characters long.';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(
                         height: 20,
                       ),
                       SizedBox(
-                        width: MediaQuery.sizeOf(context).width,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, LoginScreen.routeName);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Already have account?",
-                                style: head6Text(colorLightGray),
-                              ),
-                              Text(
-                                " Login",
-                                style: head6Text(colorGreen),
-                              ),
-                            ],
+                        child: Visibility(
+                          visible: _inProgress == false,
+                          replacement: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          child: ElevatedButton(
+                            style: appButtonStyle(),
+                            child: successButtonChild(),
+                            onPressed: () {
+                              registration(context);
+                            },
                           ),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, LoginScreen.routeName);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have account?",
+                          style: head6Text(colorLightGray),
+                        ),
+                        Text(
+                          " Login",
+                          style: head6Text(colorGreen),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

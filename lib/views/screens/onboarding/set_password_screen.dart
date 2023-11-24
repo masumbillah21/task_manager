@@ -17,6 +17,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordTEController = TextEditingController();
   String _confirmPassword = '';
+  bool _inProgress = false;
   final Map<String, String> _formValue = {
     "email": "",
     "OTP": "",
@@ -24,6 +25,11 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   };
 
   Future<void> setPassword(context) async {
+    if (mounted) {
+      setState(() {
+        _inProgress = true;
+      });
+    }
     if (_formKey.currentState!.validate()) {
       String? email = await getUserData('email');
       String? otp = await getUserData('otp');
@@ -36,6 +42,11 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         Navigator.pushNamedAndRemoveUntil(
             context, LoginScreen.routeName, (route) => false);
       }
+    }
+    if (mounted) {
+      setState(() {
+        _inProgress = false;
+      });
     }
   }
 
@@ -104,12 +115,18 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   height: 20,
                 ),
                 SizedBox(
-                  child: ElevatedButton(
-                    style: appButtonStyle(),
-                    child: successButtonChild(buttonText: "Set Password"),
-                    onPressed: () {
-                      setPassword(context);
-                    },
+                  child: Visibility(
+                    visible: _inProgress == false,
+                    replacement: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    child: ElevatedButton(
+                      style: appButtonStyle(),
+                      child: successButtonChild(buttonText: "Set Password"),
+                      onPressed: () {
+                        setPassword(context);
+                      },
+                    ),
                   ),
                 )
               ],

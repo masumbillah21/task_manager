@@ -55,11 +55,11 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
             TextButton(
               child: const Text('Yes'),
               onPressed: () async {
-                await ApiClient().deleteTaskList(id);
                 if (mounted) {
                   Navigator.of(context).pop();
                   _getTakList();
                 }
+                await ApiClient().deleteTaskList(id);
               },
             ),
             TextButton(

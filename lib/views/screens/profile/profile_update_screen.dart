@@ -83,8 +83,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                 );
                 if (mounted) {
                   setState(() {
-                    _imageFile = _imageFile = File(image!.path);
-                    ;
+                    _imageFile = File(image!.path);
                   });
                   Navigator.pop(context);
                 }
@@ -102,15 +101,18 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
         _inProgress = true;
       });
     }
-    UserModel formValue = UserModel(
-      email: _emailTEController.text.trim(),
-      firstName: _firstNameTEController.text.trim(),
-      lastName: _lastNameTEController.text.trim(),
-      mobile: _mobileTEController.text.trim(),
-      password: _passwordTEController.text,
-      photo: _imageFile,
-    );
-    await ApiClient().updateUserProfile(formValue);
+
+    if (_formKey.currentState!.validate()) {
+      UserModel formValue = UserModel(
+        email: _emailTEController.text.trim(),
+        firstName: _firstNameTEController.text.trim(),
+        lastName: _lastNameTEController.text.trim(),
+        mobile: _mobileTEController.text.trim(),
+        password: _passwordTEController.text,
+        photo: File(_imageFile!.path),
+      );
+      await ApiClient().updateUserProfile(formValue);
+    }
 
     if (mounted) {
       setState(() {
@@ -227,10 +229,10 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                     decoration: appInputDecoration("Password"),
                     obscureText: true,
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Password required.';
-                      } else if (int.parse(value) < 8) {
-                        return 'Password must be at least 8 characters long.';
+                      if (value!.isNotEmpty) {
+                        if (int.parse(value) < 8) {
+                          return 'Password must be at least 8 characters long.';
+                        }
                       }
                       return null;
                     },
@@ -241,7 +243,8 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   SizedBox(
                     child: Visibility(
                       visible: _inProgress == false,
-                      replacement: const CircularProgressIndicator(),
+                      replacement:
+                          const Center(child: CircularProgressIndicator()),
                       child: ElevatedButton(
                         style: appButtonStyle(),
                         child: successButtonChild(),

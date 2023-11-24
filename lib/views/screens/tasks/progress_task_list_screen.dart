@@ -46,10 +46,10 @@ class _ProgressTaskListScreenState extends State<ProgressTaskListScreen> {
             TextButton(
               child: const Text('Yes'),
               onPressed: () async {
-                await ApiClient().deleteTaskList(id);
                 if (mounted) {
                   Navigator.of(context).pop();
                 }
+                await ApiClient().deleteTaskList(id);
               },
             ),
             TextButton(

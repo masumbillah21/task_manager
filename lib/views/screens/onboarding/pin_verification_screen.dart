@@ -21,10 +21,12 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
   bool _inProgress = false;
 
   Future<void> _verifyPicCode(context) async {
-    if (_formKey.currentState!.validate()) {
+    if (mounted) {
       setState(() {
         _inProgress = true;
       });
+    }
+    if (_formKey.currentState!.validate()) {
       String? email = await getUserData('email');
 
       bool res =
@@ -33,6 +35,8 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
         Navigator.pushNamedAndRemoveUntil(
             context, SetPasswordScreen.routeName, (route) => false);
       }
+    }
+    if (mounted) {
       setState(() {
         _inProgress = false;
       });
@@ -52,67 +56,68 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(30),
-          child: _inProgress
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : SingleChildScrollView(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Form(
+                  key: _formKey,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "PIN Verification",
-                              style: head1Text(colorDarkBlue),
-                            ),
-                            const SizedBox(
-                              height: 1,
-                            ),
-                            Text(
-                              "A 6 digit verification pin has been sent to your email.",
-                              style: head6Text(colorLightGray),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            PinCodeTextField(
-                              controller: _pinCodeCTEController,
-                              keyboardType: TextInputType.number,
-                              appContext: context,
-                              autoDisposeControllers: false,
-                              length: 6,
-                              pinTheme: appOTPStyle(),
-                              animationType: AnimationType.fade,
-                              animationDuration:
-                                  const Duration(microseconds: 300),
-                              enableActiveFill: true,
-                              onCompleted: (value) {
-                                //_verifyPicCode(context);
-                              },
-                              onChanged: (value) {},
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            SizedBox(
-                              child: ElevatedButton(
-                                style: appButtonStyle(),
-                                child: successButtonChild(buttonText: "Verify"),
-                                onPressed: () {
-                                  _verifyPicCode(context);
-                                },
-                              ),
-                            )
-                          ],
-                        ),
+                      Text(
+                        "PIN Verification",
+                        style: head1Text(colorDarkBlue),
                       ),
+                      const SizedBox(
+                        height: 1,
+                      ),
+                      Text(
+                        "A 6 digit verification pin has been sent to your email.",
+                        style: head6Text(colorLightGray),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      PinCodeTextField(
+                        controller: _pinCodeCTEController,
+                        keyboardType: TextInputType.number,
+                        appContext: context,
+                        autoDisposeControllers: false,
+                        length: 6,
+                        pinTheme: appOTPStyle(),
+                        animationType: AnimationType.fade,
+                        animationDuration: const Duration(microseconds: 300),
+                        enableActiveFill: true,
+                        onCompleted: (value) {
+                          //_verifyPicCode(context);
+                        },
+                        onChanged: (value) {},
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        child: Visibility(
+                          visible: _inProgress == false,
+                          replacement: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          child: ElevatedButton(
+                            style: appButtonStyle(),
+                            child: successButtonChild(buttonText: "Verify"),
+                            onPressed: () {
+                              _verifyPicCode(context);
+                            },
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
+              ],
+            ),
+          ),
         ),
       ),
     );

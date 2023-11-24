@@ -115,6 +115,7 @@ ButtonStyle appButtonStyle() {
     elevation: 1,
     padding: EdgeInsets.zero,
     backgroundColor: Colors.transparent,
+    foregroundColor: colorWhite,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(6),
     ),
@@ -134,6 +135,7 @@ TextStyle buttonTextStyle() {
     fontSize: 14,
     fontFamily: 'poppins',
     fontWeight: FontWeight.w400,
+    color: colorWhite,
   );
 }
 
