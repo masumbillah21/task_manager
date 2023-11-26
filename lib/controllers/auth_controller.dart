@@ -11,7 +11,7 @@ class AuthController {
       {required String userToken, required UserModel model}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', userToken);
-    await prefs.setString("user", jsonEncode(model.toJson()));
+    await prefs.setString("user", model.toJson());
     token = userToken;
     user = UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/api/api_caller.dart';
+import 'package:task_manager/api/api_response.dart';
+import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -21,15 +23,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   bool _inProgress = false;
-  final Map<String, String> _formValue = {
-    "email": "",
-    "firstName": "",
-    "lastName": "",
-    "mobile": "",
-    "password": "",
-    "photo": ""
-  };
-
   Future<void> registration(context) async {
     if (mounted) {
       setState(() {
@@ -37,16 +30,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       });
     }
     if (_formKey.currentState!.validate()) {
-      _formValue.update('email', (value) => _emailTEController.text);
-      _formValue.update('firstName', (value) => _firstNameTEController.text);
-      _formValue.update('lastName', (value) => _lastNameTEController.text);
-      _formValue.update('mobile', (value) => _mobileTEController.text);
-      _formValue.update('password', (value) => _passwordTEController.text);
+      UserModel formValue = UserModel(
+        email: _emailTEController.text.trim(),
+        firstName: _firstNameTEController.text.trim(),
+        lastName: _lastNameTEController.text.trim(),
+        mobile: _mobileTEController.text.trim(),
+        password: _passwordTEController.text,
+      );
 
-      bool res = await ApiClient()
-          .loginAndRegistration(formValue: _formValue, url: Urls.registration);
-      if (res) {
-        Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+      ApiResponse response = await ApiClient().apiPostRequest(
+          formValue: formValue.toJson(), url: Urls.registration);
+      if (response.isSuccess) {
+        successToast('Registration Success');
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+        }
+      } else {
+        errorToast(response.errorMessage);
       }
     }
 

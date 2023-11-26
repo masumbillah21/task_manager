@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/api/api_caller.dart';
+import 'package:task_manager/api/api_response.dart';
+import 'package:task_manager/models/task_count_status_model.dart';
 import 'package:task_manager/models/task_model.dart';
+import 'package:task_manager/utility/task_status.dart';
+import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/tasks/task_create_screen.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/counter_container.dart';
@@ -17,8 +20,10 @@ class NewTaskListScreen extends StatefulWidget {
 }
 
 class _NewTaskListScreenState extends State<NewTaskListScreen> {
-  List _taskList = [];
+  List<TaskModel> _taskList = [];
+  TaskStatusCountModel _taskStatusCount = TaskStatusCountModel();
   bool _isLoading = false;
+  bool _isCountLoading = false;
 
   Future<void> _getTakList() async {
     if (mounted) {
@@ -26,9 +31,8 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
         _isLoading = true;
       });
     }
-    final SharedPreferences sp = await SharedPreferences.getInstance();
-    print("User: ${sp.getString('user')}");
-    List tasks = await ApiClient().getTaskList('New');
+
+    List tasks = await ApiClient().getTaskList(TaskStatus.newTask);
     List<TaskModel> taskData = [];
     if (tasks.isNotEmpty) {
       final parsed = tasks.cast<Map<String, dynamic>>();
@@ -39,6 +43,27 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
       setState(() {
         _isLoading = false;
         _taskList = taskData;
+      });
+    }
+  }
+
+  Future<void> _getTakStatusCount() async {
+    if (mounted) {
+      setState(() {
+        _isCountLoading = true;
+      });
+    }
+
+    ApiResponse res =
+        await ApiClient().apiGetRequest(url: Urls.taskStatusCount);
+
+    if (res.isSuccess) {
+      _taskStatusCount = TaskStatusCountModel.fromJson(res.jsonResponse);
+    }
+
+    if (mounted) {
+      setState(() {
+        _isCountLoading = false;
       });
     }
   }
@@ -76,6 +101,7 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
 
   @override
   void initState() {
+    _getTakStatusCount();
     _getTakList();
     super.initState();
   }
@@ -109,29 +135,26 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
                         )
                       : Column(
                           children: [
-                            const SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  CounterContainer(
-                                    taskNumber: 9,
-                                    taskStatus: 'New',
+                            Visibility(
+                              visible: !_isCountLoading,
+                              replacement: const Center(
+                                child: LinearProgressIndicator(),
+                              ),
+                              child: SizedBox(
+                                height: 100,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _taskStatusCount
+                                          .taskStatusCount?.length ??
+                                      0,
+                                  itemBuilder: (context, index) =>
+                                      CounterContainer(
+                                    taskNumber: _taskStatusCount
+                                        .taskStatusCount![index].sum!,
+                                    taskStatus: _taskStatusCount
+                                        .taskStatusCount![index].sId!,
                                   ),
-                                  CounterContainer(
-                                    taskNumber: 9,
-                                    taskStatus: 'Progress',
-                                  ),
-                                  CounterContainer(
-                                    taskNumber: 9,
-                                    taskStatus: 'Completed',
-                                  ),
-                                  CounterContainer(
-                                    taskNumber: 9,
-                                    taskStatus: 'Cancelled',
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
                             Expanded(

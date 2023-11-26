@@ -17,10 +17,13 @@ import 'package:task_manager/views/style/style.dart';
 class TaskManagerApp extends StatelessWidget {
   const TaskManagerApp({super.key});
 
+  static GlobalKey<NavigatorState> navigationKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Task Manager",
+      navigatorKey: navigationKey,
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
           backgroundColor: colorGreen,

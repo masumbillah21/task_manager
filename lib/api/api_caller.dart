@@ -1,48 +1,92 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
-import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/utility/utility.dart';
+import 'package:task_manager/views/screens/onboarding/login_screen.dart';
+import 'package:task_manager/views/screens/task_manager_app.dart';
 import 'package:task_manager/views/style/style.dart';
 
 class ApiClient {
-  final requestHeader = {"Content-Type": "application/json"};
+  final requestHeader = {
+    "Content-Type": "application/json",
+    'token': AuthController.token.toString(),
+  };
 
-  Future<bool> loginAndRegistration({
-    required Map<String, dynamic> formValue,
+  Future<ApiResponse> apiPostRequest({
     required String url,
+    required String formValue,
+    bool isLogin = false,
   }) async {
-    var uri = Uri.parse(url);
-    var postBody = jsonEncode(formValue);
-
-    String msg = "Something went wrong! Try again later.";
-
     try {
+      var uri = Uri.parse(url);
       var response =
-          await http.post(uri, headers: requestHeader, body: postBody);
+          await http.post(uri, headers: requestHeader, body: formValue);
       var resData = jsonDecode(response.body);
 
       if (response.statusCode == 200 && resData['status'] == 'success') {
-        if (url == Urls.login) {
-          AuthController.saveUserInfo(
-            userToken: resData['token'],
-            model: UserModel.fromJson(resData['data']),
-          );
-          msg = 'Login Success';
-        } else if (url == Urls.registration) {
-          msg = 'Registration Success';
+        return ApiResponse(
+          isSuccess: true,
+          jsonResponse: resData,
+          statusCode: response.statusCode,
+        );
+      } else if (response.statusCode == 401) {
+        if (!isLogin) {
+          backToLogin();
         }
-        successToast(msg);
-        return true;
+        return ApiResponse(
+          isSuccess: false,
+          jsonResponse: resData,
+          statusCode: response.statusCode,
+        );
       } else {
-        errorToast("else");
-        return false;
+        return ApiResponse(
+          isSuccess: false,
+          jsonResponse: resData,
+          statusCode: response.statusCode,
+        );
       }
     } catch (err) {
-      errorToast("catch");
-      return false;
+      return ApiResponse(isSuccess: false, errorMessage: err.toString());
+    }
+  }
+
+  Future<ApiResponse> apiGetRequest({
+    required String url,
+  }) async {
+    try {
+      var uri = Uri.parse(url);
+      var response = await http.get(
+        uri,
+        headers: requestHeader,
+      );
+      var resData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && resData['status'] == 'success') {
+        return ApiResponse(
+          isSuccess: true,
+          jsonResponse: resData,
+          statusCode: response.statusCode,
+        );
+      } else if (response.statusCode == 401) {
+        backToLogin();
+        return ApiResponse(
+          isSuccess: false,
+          jsonResponse: resData,
+          statusCode: response.statusCode,
+        );
+      } else {
+        return ApiResponse(
+          isSuccess: false,
+          jsonResponse: resData,
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (err) {
+      return ApiResponse(isSuccess: false, errorMessage: err.toString());
     }
   }
 
@@ -173,7 +217,6 @@ class ApiClient {
       var response = await http.get(url, headers: requestHeaderWithToken);
       var resData = jsonDecode(response.body);
       if (response.statusCode == 200 && resData['status'] == 'success') {
-        successToast("Task Loaded");
         return resData['data'];
       } else {
         errorToast("Failed to load task. Try again");
@@ -229,5 +272,13 @@ class ApiClient {
       errorToast("Failed to delete task. Try again");
       return false;
     }
+  }
+
+  Future<void> backToLogin() async {
+    await AuthController.clearAuthData();
+    Navigator.pushNamedAndRemoveUntil(
+        TaskManagerApp.navigationKey.currentContext!,
+        LoginScreen.routeName,
+        (route) => false);
   }
 }

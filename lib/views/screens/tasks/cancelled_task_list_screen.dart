@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/models/task_model.dart';
+import 'package:task_manager/utility/task_status.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 import 'package:task_manager/views/widgets/task_list_card.dart';
 
@@ -21,7 +22,7 @@ class _CancelledTaskListScreenState extends State<CancelledTaskListScreen> {
     setState(() {
       _isLoading = true;
     });
-    List tasks = await ApiClient().getTaskList('canceled');
+    List tasks = await ApiClient().getTaskList(TaskStatus.canceledTask);
     List<TaskModel> taskData = [];
     if (tasks.isNotEmpty) {
       final parsed = tasks.cast<Map<String, dynamic>>();

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/views/style/style.dart';

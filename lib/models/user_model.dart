@@ -27,7 +27,7 @@ class UserModel {
     // }
   }
 
-  Map<String, dynamic> toJson() {
+  String toJson() {
     final Map<String, dynamic> userData = <String, dynamic>{};
     userData['email'] = email;
     if (firstName != null) {
@@ -45,6 +45,6 @@ class UserModel {
     if (password != null && password!.isNotEmpty) {
       userData['password'] = password;
     }
-    return userData;
+    return jsonEncode(userData);
   }
 }

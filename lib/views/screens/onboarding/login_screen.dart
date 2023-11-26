@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/api/api_caller.dart';
+import 'package:task_manager/api/api_response.dart';
+import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
@@ -35,11 +37,19 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordTEController.text,
       );
 
-      bool res = await ApiClient()
-          .loginAndRegistration(formValue: formValue.toJson(), url: Urls.login);
-      if (res) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, BottomNavigationScreen.routeName, (route) => false);
+      ApiResponse response = await ApiClient().apiPostRequest(
+          formValue: formValue.toJson(), url: Urls.login, isLogin: true);
+      if (response.isSuccess) {
+        successToast('Login Success');
+        await AuthController.saveUserInfo(
+            userToken: response.jsonResponse['token'],
+            model: UserModel.fromJson(response.jsonResponse['data']));
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, BottomNavigationScreen.routeName, (route) => false);
+        }
+      } else {
+        successToast(response.errorMessage);
       }
     }
 

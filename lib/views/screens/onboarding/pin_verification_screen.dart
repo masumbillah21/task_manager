@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/utility/utility.dart';
 import 'package:task_manager/views/screens/onboarding/set_password_screen.dart';
 import 'package:task_manager/views/style/style.dart';

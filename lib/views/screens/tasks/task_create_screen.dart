@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/api/api_client.dart';
+import 'package:task_manager/api/api_caller.dart';
+import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/models/task_model.dart';
+import 'package:task_manager/utility/task_status.dart';
+import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
@@ -28,13 +31,16 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
       TaskModel formData = TaskModel(
           title: _subjectTEController.text.trim(),
           description: _desTEController.text.trim(),
-          status: 'New',
+          status: TaskStatus.newTask,
           createdDate: '');
-      bool res = await ApiClient().createTask(formData.toJson());
-      if (res) {
+      ApiResponse res = await ApiClient()
+          .apiPostRequest(url: Urls.createTask, formValue: formData.toJson());
+      if (res.isSuccess) {
+        successToast('Task created successfully');
         _subjectTEController.clear();
         _desTEController.clear();
-        Navigator.pop(context);
+      } else {
+        errorToast(res.errorMessage);
       }
       setState(() {
         _inProgress = false;
@@ -57,65 +63,67 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 30),
-            child: _inProgress
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Add New Task",
-                          style: head1Text(colorDarkBlue),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TextFormField(
-                          controller: _subjectTEController,
-                          decoration: appInputDecoration("Subject"),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Subject is required';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TextFormField(
-                          textAlign: TextAlign.start,
-                          controller: _desTEController,
-                          maxLines: 10,
-                          decoration: appInputDecoration("Description"),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Description is required';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          child: ElevatedButton(
-                            style: appButtonStyle(),
-                            child: successButtonChild(),
-                            onPressed: () {
-                              _createNewTask(context);
-                            },
-                          ),
-                        ),
-                      ],
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Add New Task",
+                    style: head1Text(colorDarkBlue),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: _subjectTEController,
+                    decoration: appInputDecoration("Subject"),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Subject is required';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    textAlign: TextAlign.start,
+                    controller: _desTEController,
+                    maxLines: 10,
+                    decoration: appInputDecoration("Description"),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Description is required';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    child: Visibility(
+                      visible: _inProgress == false,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      child: ElevatedButton(
+                        style: appButtonStyle(),
+                        child: successButtonChild(),
+                        onPressed: () {
+                          _createNewTask(context);
+                        },
+                      ),
                     ),
                   ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

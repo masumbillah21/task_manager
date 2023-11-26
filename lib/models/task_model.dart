@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class TaskModel {
   String? id;
   String title;
@@ -22,12 +24,12 @@ class TaskModel {
         createdDate: task['createdDate']);
   }
 
-  Map<String, dynamic> toJson() {
+  String toJson() {
     final Map<String, dynamic> taskData = <String, dynamic>{};
     taskData['_id'] = id;
     taskData['title'] = title;
     taskData['description'] = description;
     taskData['status'] = status;
-    return taskData;
+    return jsonEncode(taskData);
   }
 }
