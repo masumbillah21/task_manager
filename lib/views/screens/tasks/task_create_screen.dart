@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
-import 'package:task_manager/models/task_model.dart';
 import 'package:task_manager/utility/task_status.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -28,13 +29,13 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
       setState(() {
         _inProgress = true;
       });
-      TaskModel formData = TaskModel(
-          title: _subjectTEController.text.trim(),
-          description: _desTEController.text.trim(),
-          status: TaskStatus.newTask,
-          createdDate: '');
-      ApiResponse res = await ApiClient()
-          .apiPostRequest(url: Urls.createTask, formValue: formData.toJson());
+      Map<String, String> formData = {
+        'title': _subjectTEController.text.trim(),
+        'description': _desTEController.text.trim(),
+        'status': TaskStatus.newTask,
+      };
+      ApiResponse res = await ApiClient().apiPostRequest(
+          url: Urls.createTask, formValue: jsonEncode(formData));
       if (res.isSuccess) {
         successToast('Task created successfully');
         _subjectTEController.clear();

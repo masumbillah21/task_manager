@@ -9,27 +9,35 @@ class TaskStatusCountModel {
     if (json['data'] != null) {
       taskStatusCount = <TaskCount>[];
       json['data'].forEach((v) {
-        taskStatusCount!.add(new TaskCount.fromJson(v));
+        taskStatusCount!.add(TaskCount.fromJson(v));
       });
     }
+  }
+
+  int getByStatus(String status) {
+    TaskCount taskCount = taskStatusCount!.firstWhere(
+        (element) => element.id == status,
+        orElse: () => TaskCount());
+
+    return taskCount.sum ?? 0;
   }
 }
 
 class TaskCount {
-  String? sId;
+  String? id;
   int? sum;
 
-  TaskCount({this.sId, this.sum});
+  TaskCount({this.id, this.sum});
 
   TaskCount.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
+    id = json['_id'];
     sum = json['sum'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['sum'] = this.sum;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = id;
+    data['sum'] = sum;
     return data;
   }
 }

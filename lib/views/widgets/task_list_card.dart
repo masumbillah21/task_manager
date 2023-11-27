@@ -3,11 +3,14 @@ import 'package:task_manager/models/task_model.dart';
 import 'package:task_manager/views/style/style.dart';
 
 class TaskListCard extends StatelessWidget {
-  final TaskModel taskList;
+  final Task taskList;
   final Function(String id) deleteTask;
+  final Function(String id, String status) editTask;
+
   const TaskListCard({
     required this.taskList,
     required this.deleteTask,
+    required this.editTask,
     super.key,
   });
 
@@ -19,14 +22,14 @@ class TaskListCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              taskList.title,
+              taskList.title!,
               style: head6Text(colorDarkBlue),
             ),
             const SizedBox(
               height: 5,
             ),
             Text(
-              taskList.description,
+              taskList.description!,
               style: head7Text(colorLightGray),
             ),
             const SizedBox(
@@ -41,7 +44,7 @@ class TaskListCard extends StatelessWidget {
               children: [
                 Chip(
                   label: Text(
-                    taskList.status,
+                    taskList.status!,
                     style: head7Text(colorWhite),
                   ),
                   backgroundColor: colorGreen,
@@ -51,7 +54,7 @@ class TaskListCard extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {
-                        // TODO: Show Status Option
+                        editTask(taskList.id!, taskList.status!);
                       },
                       icon: const Icon(
                         Icons.edit,

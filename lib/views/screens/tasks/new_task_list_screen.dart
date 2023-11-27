@@ -20,32 +20,11 @@ class NewTaskListScreen extends StatefulWidget {
 }
 
 class _NewTaskListScreenState extends State<NewTaskListScreen> {
-  List<TaskModel> _taskList = [];
+  TaskModel _taskList = TaskModel();
   TaskStatusCountModel _taskStatusCount = TaskStatusCountModel();
   bool _isLoading = false;
   bool _isCountLoading = false;
-
-  Future<void> _getTakList() async {
-    if (mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
-
-    List tasks = await ApiClient().getTaskList(TaskStatus.newTask);
-    List<TaskModel> taskData = [];
-    if (tasks.isNotEmpty) {
-      final parsed = tasks.cast<Map<String, dynamic>>();
-      taskData =
-          parsed.map<TaskModel>((json) => TaskModel.fromJson(json)).toList();
-    }
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-        _taskList = taskData;
-      });
-    }
-  }
+  String _selectedTaskStatus = '';
 
   Future<void> _getTakStatusCount() async {
     if (mounted) {
@@ -66,6 +45,86 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
         _isCountLoading = false;
       });
     }
+  }
+
+  Future<void> _getTakList() async {
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
+    ApiResponse res = await ApiClient()
+        .apiGetRequest(url: "${Urls.listTaskByStatus}/${TaskStatus.newTask}");
+    if (res.isSuccess) {
+      _taskList = TaskModel.fromJson(res.jsonResponse);
+    }
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _updateTaskStatus(String id, String status) async {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        width: double.infinity,
+        height: 400,
+        child: Column(
+          children: [
+            Text(
+              "Update Task Status",
+              style: head1Text(colorGreen),
+            ),
+            const Divider(
+              height: 20,
+              color: colorGreen,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButtonFormField<String>(
+                  value: status,
+                  isExpanded: true,
+                  decoration: appInputDecoration('Task Status'),
+                  items: TaskStatus.taskStatusList
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedTaskStatus = value!;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (mounted) {
+                      Navigator.pop(context);
+                    }
+                    await ApiClient().updateTaskStatus(id, _selectedTaskStatus);
+                  },
+                  style: appButtonStyle(),
+                  child: successButtonChild(),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _deleteTask(String id) async {
@@ -112,6 +171,10 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           backgroundColor: colorGreen,
+          foregroundColor: colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
           onPressed: () {
             Navigator.pushNamed(context, TaskCreateScreen.routeName,
                 arguments: {}).then((_) => _getTakList());
@@ -125,49 +188,61 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
           child: TaskBackgroundContainer(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: _isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : _taskList.isEmpty
-                      ? const Center(
-                          child: Text('Task is empty.'),
-                        )
-                      : Column(
-                          children: [
-                            Visibility(
-                              visible: !_isCountLoading,
-                              replacement: const Center(
-                                child: LinearProgressIndicator(),
-                              ),
-                              child: SizedBox(
-                                height: 100,
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: _taskStatusCount
-                                          .taskStatusCount?.length ??
-                                      0,
-                                  itemBuilder: (context, index) =>
-                                      CounterContainer(
-                                    taskNumber: _taskStatusCount
-                                        .taskStatusCount![index].sum!,
-                                    taskStatus: _taskStatusCount
-                                        .taskStatusCount![index].sId!,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: _taskList.length,
+              child: Column(
+                children: [
+                  Visibility(
+                    visible: !_isCountLoading,
+                    replacement: const Center(
+                      child: LinearProgressIndicator(),
+                    ),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          CounterContainer(
+                            taskNumber: _taskStatusCount
+                                .getByStatus(TaskStatus.newTask),
+                            taskStatus: TaskStatus.newTask,
+                          ),
+                          CounterContainer(
+                            taskNumber: _taskStatusCount
+                                .getByStatus(TaskStatus.inProgressTask),
+                            taskStatus: TaskStatus.inProgressTask,
+                          ),
+                          CounterContainer(
+                            taskNumber: _taskStatusCount
+                                .getByStatus(TaskStatus.completedTask),
+                            taskStatus: TaskStatus.completedTask,
+                          ),
+                          CounterContainer(
+                            taskNumber: _taskStatusCount
+                                .getByStatus(TaskStatus.canceledTask),
+                            taskStatus: TaskStatus.canceledTask,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : _taskList.taskList!.isEmpty
+                            ? const Center(
+                                child: Text('Task is empty.'),
+                              )
+                            : ListView.builder(
+                                itemCount: _taskList.taskList?.length ?? 0,
                                 itemBuilder: (context, index) => TaskListCard(
                                   deleteTask: _deleteTask,
-                                  taskList: _taskList[index],
+                                  editTask: _updateTaskStatus,
+                                  taskList: _taskList.taskList![index],
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

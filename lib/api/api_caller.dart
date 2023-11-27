@@ -181,59 +181,11 @@ class ApiClient {
     }
   }
 
-  Future<bool> createTask(formValue) async {
-    var url = Uri.parse(Urls.createTask);
-    var postBody = jsonEncode(formValue);
-    String? userToken = AuthController.token;
-    var requestHeaderWithToken = {
-      "Content-Type": "application/json",
-      "token": userToken!
-    };
-    try {
-      var response =
-          await http.post(url, headers: requestHeaderWithToken, body: postBody);
-      var resData = jsonDecode(response.body);
-      if (response.statusCode == 200 && resData['status'] == 'success') {
-        successToast("Task Created Success");
-        return true;
-      } else {
-        errorToast("Task Failed To Create! Try again");
-        return false;
-      }
-    } catch (_) {
-      errorToast("Task Failed To Create! Try again");
-      return false;
-    }
-  }
-
-  Future<List> getTaskList(String status) async {
-    var url = Uri.parse("${Urls.listTaskByStatus}/$status");
-    String token = await getUserData('token');
-    var requestHeaderWithToken = {
-      "Content-Type": "application/json",
-      "token": token
-    };
-    try {
-      var response = await http.get(url, headers: requestHeaderWithToken);
-      var resData = jsonDecode(response.body);
-      if (response.statusCode == 200 && resData['status'] == 'success') {
-        return resData['data'];
-      } else {
-        errorToast("Failed to load task. Try again");
-        return [];
-      }
-    } catch (err) {
-      errorToast("Failed to load task. Try again");
-      return [];
-    }
-  }
-
   Future<bool> updateTaskStatus(String id, String status) async {
     var url = Uri.parse("${Urls.updateTaskStatus}/$id/$status");
-    String? userToken = AuthController.token;
     var requestHeaderWithToken = {
       "Content-Type": "application/json",
-      "token": userToken!
+      "token": AuthController.token!
     };
     try {
       var response = await http.get(url, headers: requestHeaderWithToken);
