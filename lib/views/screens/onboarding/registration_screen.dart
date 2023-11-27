@@ -192,7 +192,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       children: [
                         Text(
                           "Already have account?",
-                          style: head2Text(colorLightGray),
+                          style: head2Text(colorGray),
                         ),
                         Text(
                           " Login",

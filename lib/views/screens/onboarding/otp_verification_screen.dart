@@ -84,7 +84,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       ),
                       Text(
                         "A 6 digit verification pin has been sent to your email.",
-                        style: head2Text(colorLightGray),
+                        style: head2Text(colorGray),
                       ),
                       const SizedBox(
                         height: 20,

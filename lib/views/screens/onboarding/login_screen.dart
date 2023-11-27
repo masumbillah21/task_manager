@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Text(
                         "Welcome to task manager",
-                        style: head2Text(colorLightGray),
+                        style: head2Text(colorGray),
                       ),
                       const SizedBox(
                         height: 20,
@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       "Forgot password?",
-                      style: head2Text(colorLightGray),
+                      style: head2Text(colorGray),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Text(
                           "Don't have account?",
-                          style: head2Text(colorLightGray),
+                          style: head2Text(colorGray),
                         ),
                         Text(
                           " Sign Up",

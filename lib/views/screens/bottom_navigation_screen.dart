@@ -36,7 +36,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentScreen,
         selectedItemColor: colorGreen,
-        unselectedItemColor: colorLightGray,
+        unselectedItemColor: colorGray,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         onTap: (index) {

@@ -83,7 +83,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 ),
                 Text(
                   "Minimum length of password must be 8 characters with letter and number combination",
-                  style: head2Text(colorLightGray),
+                  style: head2Text(colorGray),
                 ),
                 const SizedBox(
                   height: 20,

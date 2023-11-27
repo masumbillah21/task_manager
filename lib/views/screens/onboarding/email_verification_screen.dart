@@ -84,7 +84,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                       ),
                       Text(
                         "A 6 digit verification pin will send to your email address",
-                        style: head2Text(colorLightGray),
+                        style: head2Text(colorGray),
                       ),
                       const SizedBox(
                         height: 20,
@@ -135,7 +135,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                       children: [
                         Text(
                           "Already have account?",
-                          style: head2Text(colorLightGray),
+                          style: head2Text(colorGray),
                         ),
                         Text(
                           " Login",

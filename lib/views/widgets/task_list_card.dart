@@ -182,7 +182,7 @@ class _TaskListCardState extends State<TaskListCard> {
             ),
             Text(
               widget.taskList.description!,
-              style: head3Text(colorLightGray),
+              style: head3Text(colorGray),
             ),
             const SizedBox(
               height: 5,

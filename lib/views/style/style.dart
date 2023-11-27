@@ -10,7 +10,7 @@ const Color colorBlue = Color.fromRGBO(23, 193, 232, 1.0);
 const Color colorOrange = Color.fromRGBO(230, 126, 34, 1.0);
 const Color colorWhite = Color.fromRGBO(255, 255, 255, 1.0);
 const Color colorDarkBlue = Color.fromRGBO(44, 62, 80, 1.0);
-const Color colorLightGray = Color.fromRGBO(135, 142, 150, 1.0);
+const Color colorGray = Color.fromRGBO(96, 95, 95, 1.0);
 const Color colorLight = Color.fromRGBO(211, 211, 211, 1.0);
 
 SizedBox itemSizeBox({Widget? child}) {
@@ -53,7 +53,7 @@ TextStyle head2Text(Color textColor) {
       color: textColor,
       fontSize: 18,
       fontFamily: 'poppins',
-      fontWeight: FontWeight.w400);
+      fontWeight: FontWeight.w500);
 }
 
 TextStyle head3Text(Color textColor) {
@@ -69,7 +69,7 @@ TextStyle head4Text(Color textColor) {
       color: textColor,
       fontSize: 12,
       fontFamily: 'poppins',
-      fontWeight: FontWeight.w500);
+      fontWeight: FontWeight.w800);
 }
 
 InputDecoration appInputDecoration(String label) {
