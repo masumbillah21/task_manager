@@ -3,6 +3,7 @@ import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/models/user_model.dart';
+import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/views/screens/onboarding/email_verification_screen.dart';
@@ -40,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ApiResponse response = await ApiClient().apiPostRequest(
           formValue: formValue.toJson(), url: Urls.login, isLogin: true);
       if (response.isSuccess) {
-        successToast('Login Success');
+        successToast(Messages.loginSuccess);
         await AuthController.saveUserInfo(
             userToken: response.jsonResponse['token'],
             model: UserModel.fromJson(response.jsonResponse['data']));
@@ -93,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Text(
                         "Welcome to task manager",
-                        style: head6Text(colorLightGray),
+                        style: head2Text(colorLightGray),
                       ),
                       const SizedBox(
                         height: 20,
@@ -158,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       "Forgot password?",
-                      style: head6Text(colorLightGray),
+                      style: head2Text(colorLightGray),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -178,11 +179,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Text(
                           "Don't have account?",
-                          style: head6Text(colorLightGray),
+                          style: head2Text(colorLightGray),
                         ),
                         Text(
                           " Sign Up",
-                          style: head6Text(colorGreen),
+                          style: head2Text(colorGreen),
                         ),
                       ],
                     ),

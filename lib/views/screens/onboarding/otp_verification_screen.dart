@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/api/api_caller.dart';
-import 'package:task_manager/utility/utility.dart';
+import 'package:task_manager/api/api_response.dart';
+import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/models/user_model.dart';
+import 'package:task_manager/utility/messages.dart';
+import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/onboarding/set_password_screen.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
-class PinVerificationScreen extends StatefulWidget {
+class OTPVerificationScreen extends StatefulWidget {
   static const routeName = "./pin-verification";
 
-  const PinVerificationScreen({super.key});
+  const OTPVerificationScreen({super.key});
 
   @override
-  State<PinVerificationScreen> createState() => _PinVerificationScreenState();
+  State<OTPVerificationScreen> createState() => _OTPVerificationScreenState();
 }
 
-class _PinVerificationScreenState extends State<PinVerificationScreen> {
+class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeCTEController = TextEditingController();
   bool _inProgress = false;
@@ -27,13 +31,19 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
       });
     }
     if (_formKey.currentState!.validate()) {
-      String? email = await getUserData('email');
+      String? email = AuthController.user?.email ?? '';
 
-      bool res =
-          await ApiClient().verifyOTPRequest(email, _pinCodeCTEController.text);
-      if (res) {
+      ApiResponse res = await ApiClient().apiGetRequest(
+          url: Urls.recoverVerifyOTP(email, _pinCodeCTEController.text.trim()));
+      if (res.isSuccess) {
+        AuthController.saveUserToReset(
+            model: UserModel.fromJson(
+                {'email': email, 'OTP': _pinCodeCTEController.text.trim()}));
+        successToast(Messages.otpSuccess);
         Navigator.pushNamedAndRemoveUntil(
             context, SetPasswordScreen.routeName, (route) => false);
+      } else {
+        errorToast(Messages.otpFailed);
       }
     }
     if (mounted) {
@@ -74,7 +84,7 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
                       ),
                       Text(
                         "A 6 digit verification pin has been sent to your email.",
-                        style: head6Text(colorLightGray),
+                        style: head2Text(colorLightGray),
                       ),
                       const SizedBox(
                         height: 20,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/models/user_model.dart';
+import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -41,7 +42,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ApiResponse response = await ApiClient().apiPostRequest(
           formValue: formValue.toJson(), url: Urls.registration);
       if (response.isSuccess) {
-        successToast('Registration Success');
+        successToast(Messages.registrationSuccess);
         if (mounted) {
           Navigator.pushReplacementNamed(context, LoginScreen.routeName);
         }
@@ -191,11 +192,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       children: [
                         Text(
                           "Already have account?",
-                          style: head6Text(colorLightGray),
+                          style: head2Text(colorLightGray),
                         ),
                         Text(
                           " Login",
-                          style: head6Text(colorGreen),
+                          style: head2Text(colorGreen),
                         ),
                       ],
                     ),

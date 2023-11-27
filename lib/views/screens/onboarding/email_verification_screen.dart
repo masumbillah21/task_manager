@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_caller.dart';
+import 'package:task_manager/api/api_response.dart';
+import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/models/user_model.dart';
+import 'package:task_manager/utility/messages.dart';
+import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
-import 'package:task_manager/views/screens/onboarding/pin_verification_screen.dart';
+import 'package:task_manager/views/screens/onboarding/otp_verification_screen.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
@@ -28,10 +33,17 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       });
     }
     if (_formKey.currentState!.validate()) {
-      bool res = await ApiClient().verifyEmailRequest(_emailTEController.text);
-      if (res) {
+      ApiResponse res = await ApiClient().apiGetRequest(
+          url: Urls.recoverVerifyEmail(_emailTEController.text.trim()));
+      if (res.isSuccess) {
+        AuthController.saveUserToReset(
+            model:
+                UserModel.fromJson({'email': _emailTEController.text.trim()}));
+        successToast(Messages.emailSuccess);
         Navigator.pushReplacementNamed(
-            context, PinVerificationScreen.routeName);
+            context, OTPVerificationScreen.routeName);
+      } else {
+        errorToast(res.errorMessage);
       }
     }
     if (mounted) {
@@ -72,7 +84,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                       ),
                       Text(
                         "A 6 digit verification pin will send to your email address",
-                        style: head6Text(colorLightGray),
+                        style: head2Text(colorLightGray),
                       ),
                       const SizedBox(
                         height: 20,
@@ -123,11 +135,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                       children: [
                         Text(
                           "Already have account?",
-                          style: head6Text(colorLightGray),
+                          style: head2Text(colorLightGray),
                         ),
                         Text(
                           " Login",
-                          style: head6Text(colorGreen),
+                          style: head2Text(colorGreen),
                         ),
                       ],
                     ),

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_caller.dart';
-import 'package:task_manager/utility/utility.dart';
+import 'package:task_manager/api/api_response.dart';
+import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/models/user_model.dart';
+import 'package:task_manager/utility/messages.dart';
+import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
@@ -18,11 +22,6 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
   String _confirmPassword = '';
   bool _inProgress = false;
-  final Map<String, String> _formValue = {
-    "email": "",
-    "OTP": "",
-    "password": ""
-  };
 
   Future<void> setPassword(context) async {
     if (mounted) {
@@ -31,16 +30,23 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       });
     }
     if (_formKey.currentState!.validate()) {
-      String? email = await getUserData('email');
-      String? otp = await getUserData('otp');
-      _formValue.update('OTP', (value) => otp);
-      _formValue.update('email', (value) => email);
-      _formValue.update('password', (value) => _passwordTEController.text);
+      String? email = AuthController.user?.email ?? '';
+      String? otp = AuthController.user?.otp ?? '';
 
-      bool res = await ApiClient().setPasswordRequest(_formValue);
-      if (res) {
+      UserModel formValue = UserModel(
+        email: email,
+        otp: otp,
+        password: _passwordTEController.text,
+      );
+
+      ApiResponse res = await ApiClient().apiPostRequest(
+          url: Urls.recoverResetPass, formValue: formValue.toJson());
+      if (res.isSuccess) {
+        successToast(Messages.passwordResetSuccess);
         Navigator.pushNamedAndRemoveUntil(
             context, LoginScreen.routeName, (route) => false);
+      } else {
+        errorToast(res.errorMessage);
       }
     }
     if (mounted) {
@@ -77,7 +83,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 ),
                 Text(
                   "Minimum length of password must be 8 characters with letter and number combination",
-                  style: head6Text(colorLightGray),
+                  style: head2Text(colorLightGray),
                 ),
                 const SizedBox(
                   height: 20,

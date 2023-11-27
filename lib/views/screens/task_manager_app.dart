@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/views/screens/onboarding/email_verification_screen.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
-import 'package:task_manager/views/screens/onboarding/pin_verification_screen.dart';
+import 'package:task_manager/views/screens/onboarding/otp_verification_screen.dart';
 import 'package:task_manager/views/screens/onboarding/registration_screen.dart';
 import 'package:task_manager/views/screens/onboarding/set_password_screen.dart';
 import 'package:task_manager/views/screens/onboarding/splash_screen.dart';
@@ -38,8 +38,8 @@ class TaskManagerApp extends StatelessWidget {
         RegistrationScreen.routeName: (context) => const RegistrationScreen(),
         EmailVerificationScreen.routeName: (context) =>
             const EmailVerificationScreen(),
-        PinVerificationScreen.routeName: (context) =>
-            const PinVerificationScreen(),
+        OTPVerificationScreen.routeName: (context) =>
+            const OTPVerificationScreen(),
         SetPasswordScreen.routeName: (context) => const SetPasswordScreen(),
         BottomNavigationScreen.routeName: (context) =>
             const BottomNavigationScreen(),

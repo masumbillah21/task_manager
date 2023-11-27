@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
-import 'package:task_manager/utility/task_status.dart';
+import 'package:task_manager/utility/messages.dart';
+import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
@@ -32,16 +33,16 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
       Map<String, String> formData = {
         'title': _subjectTEController.text.trim(),
         'description': _desTEController.text.trim(),
-        'status': TaskStatus.newTask,
+        'status': StatusEnum.New.name,
       };
       ApiResponse res = await ApiClient().apiPostRequest(
           url: Urls.createTask, formValue: jsonEncode(formData));
       if (res.isSuccess) {
-        successToast('Task created successfully');
+        successToast(Messages.createTaskSuccess);
         _subjectTEController.clear();
         _desTEController.clear();
       } else {
-        errorToast(res.errorMessage);
+        errorToast(res.errorMessage.toString());
       }
       setState(() {
         _inProgress = false;

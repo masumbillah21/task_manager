@@ -8,6 +8,7 @@ class UserModel {
   String? mobile;
   File? photo;
   String? password;
+  String? otp;
 
   UserModel(
       {this.email,
@@ -15,13 +16,15 @@ class UserModel {
       this.lastName,
       this.mobile,
       this.photo,
-      this.password});
+      this.password,
+      this.otp});
 
   UserModel.fromJson(Map<String, dynamic> json) {
-    email = json['email'];
-    firstName = json['firstName'];
-    lastName = json['lastName'];
-    mobile = json['mobile'];
+    email = json['email'] ?? '';
+    firstName = json['firstName'] ?? '';
+    lastName = json['lastName'] ?? '';
+    mobile = json['mobile'] ?? '';
+    otp = json['OTP'] ?? '';
     // if (json['photo'] != "") {
     //   photo = showBase64Image(json['photo']);
     // }
@@ -44,6 +47,9 @@ class UserModel {
     }
     if (password != null && password!.isNotEmpty) {
       userData['password'] = password;
+    }
+    if (otp != null && otp!.isNotEmpty) {
+      userData['OTP'] = otp;
     }
     return jsonEncode(userData);
   }

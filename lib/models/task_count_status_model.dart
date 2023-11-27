@@ -15,11 +15,11 @@ class TaskStatusCountModel {
   }
 
   int getByStatus(String status) {
-    TaskCount taskCount = taskStatusCount!.firstWhere(
+    TaskCount? taskCount = taskStatusCount?.firstWhere(
         (element) => element.id == status,
         orElse: () => TaskCount());
 
-    return taskCount.sum ?? 0;
+    return taskCount?.sum ?? 0;
   }
 }
 

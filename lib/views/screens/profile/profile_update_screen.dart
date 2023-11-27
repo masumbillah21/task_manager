@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_manager/api/api_caller.dart';
+import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/models/user_model.dart';
+import 'package:task_manager/utility/messages.dart';
+import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/profile_image_picker.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
@@ -95,7 +98,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
     );
   }
 
-  Future<void> updateProfile() async {
+  Future<void> _updateProfile() async {
     if (mounted) {
       setState(() {
         _inProgress = true;
@@ -109,9 +112,19 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
         lastName: _lastNameTEController.text.trim(),
         mobile: _mobileTEController.text.trim(),
         password: _passwordTEController.text,
-        photo: File(_imageFile!.path),
+        //photo: File(_imageFile?.path ?? ''),
       );
-      await ApiClient().updateUserProfile(formValue);
+      ApiResponse res = await ApiClient().apiPostRequest(
+          url: Urls.profileUpdate, formValue: formValue.toJson());
+      if (res.isSuccess) {
+        AuthController.saveUserInfo(
+          userToken: AuthController.token!,
+          model: formValue,
+        );
+        successToast(Messages.profileUpdateSuccess);
+      } else {
+        errorToast(res.errorMessage);
+      }
     }
 
     if (mounted) {
@@ -149,7 +162,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
       ),
       body: TaskBackgroundContainer(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
@@ -160,6 +173,18 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   Text(
                     "Update Profile",
                     style: head1Text(colorDarkBlue),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: const CircleAvatar(
+                      radius: 60,
+                      backgroundColor: colorWhite,
+                      backgroundImage:
+                          AssetImage("assets/images/placeholder.png"),
+                    ),
                   ),
                   const SizedBox(
                     height: 20,
@@ -249,7 +274,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                         style: appButtonStyle(),
                         child: successButtonChild(),
                         onPressed: () {
-                          updateProfile();
+                          _updateProfile();
                         },
                       ),
                     ),

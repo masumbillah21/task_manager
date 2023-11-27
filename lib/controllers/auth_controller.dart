@@ -16,6 +16,12 @@ class AuthController {
     user = UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
   }
 
+  static Future<void> saveUserToReset({required UserModel model}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("user", model.toJson());
+    user = UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
+  }
+
   static Future<void> initializeUserCache() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');

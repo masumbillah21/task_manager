@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/views/screens/tasks/cancelled_task_list_screen.dart';
 import 'package:task_manager/views/screens/tasks/completed_task_list_screen.dart';
 import 'package:task_manager/views/screens/tasks/new_task_list_screen.dart';
@@ -42,22 +43,22 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           _currentScreen = index;
           setState(() {});
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt),
-            label: 'New',
+            icon: const Icon(Icons.list_alt),
+            label: StatusEnum.New.name,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.alarm),
-            label: 'In Progress',
+            icon: const Icon(Icons.alarm),
+            label: StatusEnum.Progress.name,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.done),
-            label: 'Completed',
+            icon: const Icon(Icons.done),
+            label: StatusEnum.Completed.name,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.cancel),
-            label: 'Canceled',
+            icon: const Icon(Icons.cancel),
+            label: StatusEnum.Canceled.name,
           ),
         ],
       ),
