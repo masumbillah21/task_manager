@@ -3,17 +3,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-const colorRed = Color.fromRGBO(231, 28, 36, 1);
-const colorDark = Color.fromRGBO(136, 28, 32, 1);
-const colorGreen = Color.fromRGBO(33, 191, 115, 1);
-const colorBlue = Color.fromRGBO(52, 152, 219, 1.0);
-const colorOrange = Color.fromRGBO(230, 126, 34, 1.0);
-const colorWhite = Color.fromRGBO(255, 255, 255, 1.0);
-const colorDarkBlue = Color.fromRGBO(44, 62, 80, 1.0);
-const colorLightGray = Color.fromRGBO(135, 142, 150, 1.0);
-const colorLight = Color.fromRGBO(211, 211, 211, 1.0);
+const Color colorRed = Color.fromRGBO(231, 28, 36, 1);
+const Color colorPink = Color.fromRGBO(203, 12, 159, 1);
+const Color colorGreen = Color.fromRGBO(33, 191, 115, 1);
+const Color colorBlue = Color.fromRGBO(23, 193, 232, 1.0);
+const Color colorOrange = Color.fromRGBO(230, 126, 34, 1.0);
+const Color colorWhite = Color.fromRGBO(255, 255, 255, 1.0);
+const Color colorDarkBlue = Color.fromRGBO(44, 62, 80, 1.0);
+const Color colorLightGray = Color.fromRGBO(135, 142, 150, 1.0);
+const Color colorLight = Color.fromRGBO(211, 211, 211, 1.0);
 
-SizedBox itemSizeBox({child}) {
+SizedBox itemSizeBox({Widget? child}) {
   return SizedBox(
     width: double.infinity,
     child: Container(
@@ -39,7 +39,7 @@ PinTheme appOTPStyle() {
   );
 }
 
-TextStyle head1Text(textColor) {
+TextStyle head1Text(Color textColor) {
   return TextStyle(
     color: textColor,
     fontSize: 28,
@@ -48,31 +48,31 @@ TextStyle head1Text(textColor) {
   );
 }
 
-TextStyle head6Text(textColor) {
+TextStyle head2Text(Color textColor) {
   return TextStyle(
       color: textColor,
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: 'poppins',
       fontWeight: FontWeight.w400);
 }
 
-TextStyle head7Text(textColor) {
+TextStyle head3Text(Color textColor) {
   return TextStyle(
       color: textColor,
-      fontSize: 13,
-      fontFamily: 'poppins',
-      fontWeight: FontWeight.w400);
-}
-
-TextStyle head9Text(textColor) {
-  return TextStyle(
-      color: textColor,
-      fontSize: 9,
+      fontSize: 14,
       fontFamily: 'poppins',
       fontWeight: FontWeight.w500);
 }
 
-InputDecoration appInputDecoration(label) {
+TextStyle head4Text(Color textColor) {
+  return TextStyle(
+      color: textColor,
+      fontSize: 12,
+      fontFamily: 'poppins',
+      fontWeight: FontWeight.w500);
+}
+
+InputDecoration appInputDecoration(String label) {
   return InputDecoration(
       focusedBorder: const OutlineInputBorder(
         borderSide: BorderSide(color: colorGreen, width: 1),
@@ -86,18 +86,6 @@ InputDecoration appInputDecoration(label) {
       border: const OutlineInputBorder(),
       labelText: label,
       alignLabelWithHint: true);
-}
-
-DecoratedBox appDropDownStyle(child) {
-  return DecoratedBox(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: Colors.white, width: 1),
-      borderRadius: BorderRadius.circular(4),
-    ),
-    child: Padding(
-        padding: const EdgeInsets.only(left: 30, right: 30), child: child),
-  );
 }
 
 SvgPicture screenBackground(context) {
@@ -119,14 +107,6 @@ ButtonStyle appButtonStyle() {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(6),
     ),
-  );
-}
-
-ButtonStyle appStatusButtonStyle(btnColor) {
-  return ElevatedButton.styleFrom(
-    elevation: 1,
-    padding: EdgeInsets.zero,
-    backgroundColor: btnColor,
   );
 }
 
@@ -154,6 +134,20 @@ Ink successButtonChild({String buttonText = ''}) {
               buttonText,
               style: buttonTextStyle(),
             ),
+    ),
+  );
+}
+
+Widget appStatusBar({String? taskStatus, Color? backgroundColor}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+    decoration: BoxDecoration(
+      color: backgroundColor,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Text(
+      taskStatus!,
+      style: head3Text(colorWhite),
     ),
   );
 }
