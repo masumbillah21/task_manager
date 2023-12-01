@@ -1,12 +1,12 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:task_manager/views/style/style.dart';
 
 class ProfileImagePicker extends StatelessWidget {
   final VoidCallback onTab;
-  final File? photoLink;
+  final XFile? photoLink;
   const ProfileImagePicker({
     required this.onTab,
     this.photoLink,
@@ -15,7 +15,7 @@ class ProfileImagePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("Profile Image Picker: ${photoLink?.path}");
+    log("Profile Image Picker: ${photoLink?.name ?? ''}");
     double height = 50.0;
     return GestureDetector(
       onTap: onTab,
@@ -27,24 +27,33 @@ class ProfileImagePicker extends StatelessWidget {
           color: colorWhite,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 10),
-          width: 120,
-          height: height,
-          decoration: const BoxDecoration(
-            color: colorDarkBlue,
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(10),
-              topLeft: Radius.circular(10),
+        child: Row(
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 10),
+              width: 120,
+              height: height,
+              decoration: const BoxDecoration(
+                color: colorDarkBlue,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  topLeft: Radius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'Upload Photo',
+                style: TextStyle(
+                  color: colorWhite,
+                ),
+              ),
             ),
-          ),
-          child: const Text(
-            'Upload Photo',
-            style: TextStyle(
-              color: colorWhite,
-            ),
-          ),
+            Expanded(
+                child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Text(photoLink?.name ?? ''),
+            )),
+          ],
         ),
       ),
     );

@@ -82,12 +82,13 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
-          onPressed: () {
-            Navigator.pushNamed(context, TaskCreateScreen.routeName,
-                arguments: {}).then((_) {
+          onPressed: () async {
+            final res =
+                await Navigator.pushNamed(context, TaskCreateScreen.routeName);
+            if (res == true) {
               _getTakStatusCount();
               _getTakList();
-            });
+            }
           },
           child: const Icon(Icons.add),
         ),

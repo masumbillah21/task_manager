@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/urls.dart';
+import 'package:task_manager/utility/utilites.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/profile_image_picker.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
@@ -24,8 +27,9 @@ class ProfileUpdateScreen extends StatefulWidget {
 class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
   final ImagePicker picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
-  File? _imageFile;
+  XFile? _imageFile;
   bool _inProgress = false;
+  String _photoInBase64 = AuthController.user?.photo ?? '';
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
@@ -66,11 +70,16 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   maxWidth: 400,
                 );
 
-                if (mounted) {
-                  setState(() {
-                    _imageFile = File(photo!.path);
-                  });
-                  Navigator.pop(context);
+                if (photo != null) {
+                  List<int> imageBytes = await photo.readAsBytes();
+
+                  if (mounted) {
+                    Navigator.pop(context);
+                    setState(() {
+                      _photoInBase64 = base64Encode(imageBytes);
+                      _imageFile = photo;
+                    });
+                  }
                 }
               },
             ),
@@ -86,7 +95,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                 );
                 if (mounted) {
                   setState(() {
-                    _imageFile = File(image!.path);
+                    _imageFile = image;
                   });
                   Navigator.pop(context);
                 }
@@ -112,15 +121,12 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
         lastName: _lastNameTEController.text.trim(),
         mobile: _mobileTEController.text.trim(),
         password: _passwordTEController.text,
-        //photo: File(_imageFile?.path ?? ''),
+        photo: _photoInBase64,
       );
       ApiResponse res = await ApiClient().apiPostRequest(
           url: Urls.profileUpdate, formValue: formValue.toJson());
       if (res.isSuccess) {
-        AuthController.saveUserInfo(
-          userToken: AuthController.token!,
-          model: formValue,
-        );
+        AuthController.saveUserToReset(model: formValue);
         successToast(Messages.profileUpdateSuccess);
       } else {
         errorToast(res.errorMessage);
@@ -156,6 +162,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    log("userModel:$_photoInBase64");
     return Scaffold(
       appBar: const TaskAppBar(
         enableProfile: false,
@@ -179,12 +186,27 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   Container(
                     alignment: Alignment.center,
-                    child: const CircleAvatar(
-                      radius: 60,
-                      backgroundColor: colorWhite,
-                      backgroundImage:
-                          AssetImage("assets/images/placeholder.png"),
-                    ),
+                    child: _photoInBase64.isNotEmpty
+                        ? CircleAvatar(
+                            radius: 60,
+                            backgroundColor: colorWhite,
+                            backgroundImage:
+                                MemoryImage(showBase64Image(_photoInBase64)),
+                          )
+                        : _imageFile != null
+                            ? CircleAvatar(
+                                radius: 60,
+                                backgroundColor: colorWhite,
+                                backgroundImage: FileImage(
+                                  File(_imageFile?.path ?? ''),
+                                ),
+                              )
+                            : const CircleAvatar(
+                                radius: 60,
+                                backgroundColor: colorWhite,
+                                backgroundImage:
+                                    AssetImage("assets/images/placeholder.png"),
+                              ),
                   ),
                   const SizedBox(
                     height: 20,

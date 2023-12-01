@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 
 class UserModel {
   String? email;
   String? firstName;
   String? lastName;
   String? mobile;
-  File? photo;
+  String? photo;
   String? password;
   String? otp;
 
@@ -25,9 +24,7 @@ class UserModel {
     lastName = json['lastName'] ?? '';
     mobile = json['mobile'] ?? '';
     otp = json['OTP'] ?? '';
-    // if (json['photo'] != "") {
-    //   photo = showBase64Image(json['photo']);
-    // }
+    photo = json['photo'] ?? '';
   }
 
   String toJson() {
@@ -43,7 +40,7 @@ class UserModel {
       userData['mobile'] = mobile;
     }
     if (photo != null) {
-      userData['photo'] = base64Encode(photo!.readAsBytesSync());
+      userData['photo'] = photo;
     }
     if (password != null && password!.isNotEmpty) {
       userData['password'] = password;

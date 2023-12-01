@@ -24,6 +24,7 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
   final TextEditingController _subjectTEController = TextEditingController();
   final TextEditingController _desTEController = TextEditingController();
   bool _inProgress = false;
+  bool _taskAdded = false;
 
   Future<void> _createNewTask(context) async {
     if (_formKey.currentState!.validate()) {
@@ -41,12 +42,18 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
         successToast(Messages.createTaskSuccess);
         _subjectTEController.clear();
         _desTEController.clear();
+        _taskAdded = true;
+        if (mounted) {
+          setState(() {});
+        }
       } else {
         errorToast(res.errorMessage.toString());
       }
-      setState(() {
-        _inProgress = false;
-      });
+      if (mounted) {
+        setState(() {
+          _inProgress = false;
+        });
+      }
     }
   }
 
@@ -59,71 +66,81 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const TaskAppBar(),
-      body: TaskBackgroundContainer(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 30),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Add New Task",
-                    style: head1Text(colorDarkBlue),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    controller: _subjectTEController,
-                    decoration: appInputDecoration("Subject"),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Subject is required';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    textAlign: TextAlign.start,
-                    controller: _desTEController,
-                    maxLines: 10,
-                    decoration: appInputDecoration("Description"),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Description is required';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    child: Visibility(
-                      visible: _inProgress == false,
-                      replacement: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      child: ElevatedButton(
-                        style: appButtonStyle(),
-                        child: successButtonChild(),
-                        onPressed: () {
-                          _createNewTask(context);
-                        },
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (onPop) {
+        if (onPop) {
+          return;
+        }
+        Navigator.pop(context, _taskAdded);
+      },
+      child: Scaffold(
+        appBar: const TaskAppBar(),
+        body: TaskBackgroundContainer(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 30),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Add New Task",
+                      style: head1Text(colorDarkBlue),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextFormField(
+                      controller: _subjectTEController,
+                      decoration: appInputDecoration("Subject"),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Subject is required';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextFormField(
+                      textAlign: TextAlign.start,
+                      controller: _desTEController,
+                      maxLines: 10,
+                      decoration: appInputDecoration("Description"),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Description is required';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      child: Visibility(
+                        visible: _inProgress == false,
+                        replacement: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        child: ElevatedButton(
+                          style: appButtonStyle(),
+                          child: successButtonChild(),
+                          onPressed: () {
+                            _createNewTask(context);
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
