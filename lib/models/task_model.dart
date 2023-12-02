@@ -19,7 +19,7 @@ class TaskModel {
   }
 
   String toJson() {
-    final Map<String, dynamic> task = Map<String, dynamic>();
+    final Map<String, dynamic> task = <String, dynamic>{};
     task['_id'] = id;
     task['title'] = title;
     task['description'] = description;

@@ -4,6 +4,7 @@ import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/urls.dart';
+import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
@@ -99,6 +100,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredEmail;
+                          } else if (!validateEmail(value)) {
+                            return Messages.inValidEmail;
                           }
                           return null;
                         },
@@ -143,7 +146,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           if (value!.isEmpty) {
                             return Messages.requiredMobileNumber;
                           } else if (value.length < 11) {
-                            return Messages.mobileNumberLength;
+                            return Messages.invalidMobileNumber;
+                          } else if (!validatePhoneNumber(value)) {
+                            return Messages.invalidMobileNumber;
                           }
                           return null;
                         },

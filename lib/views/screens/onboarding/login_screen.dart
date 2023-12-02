@@ -5,6 +5,7 @@ import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/urls.dart';
+import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/views/screens/onboarding/email_verification_screen.dart';
 import 'package:task_manager/views/screens/onboarding/registration_screen.dart';
@@ -107,6 +108,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredEmail;
+                          } else if (!validateEmail(value)) {
+                            return Messages.inValidEmail;
                           }
                           return null;
                         },

@@ -8,6 +8,7 @@ import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/urls.dart';
+import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/profile_image_picker.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
@@ -207,6 +208,8 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return Messages.requiredEmail;
+                      } else if (!validateEmail(value)) {
+                        return Messages.inValidEmail;
                       }
                       return null;
                     },
@@ -250,7 +253,9 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                       if (value!.isEmpty) {
                         return Messages.requiredMobileNumber;
                       } else if (value.length < 11) {
-                        return Messages.mobileNumberLength;
+                        return Messages.invalidMobileNumber;
+                      } else if (!validatePhoneNumber(value)) {
+                        return Messages.invalidMobileNumber;
                       }
                       return null;
                     },
@@ -260,7 +265,9 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _passwordTEController,
-                    decoration: const InputDecoration(label: Text("Password")),
+                    decoration: const InputDecoration(
+                      label: Text("Password (Optional)"),
+                    ),
                     obscureText: true,
                     validator: (value) {
                       if (value!.isNotEmpty) {

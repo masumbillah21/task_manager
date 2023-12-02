@@ -5,6 +5,7 @@ import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/urls.dart';
+import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
 import 'package:task_manager/views/screens/onboarding/otp_verification_screen.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -39,11 +40,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         AuthController.saveUserToReset(
             model:
                 UserModel.fromJson({'email': _emailTEController.text.trim()}));
-        successToast(Messages.emailSuccess);
+        successToast(Messages.emailVerificationSuccess);
         Navigator.pushReplacementNamed(
             context, OTPVerificationScreen.routeName);
       } else {
-        errorToast(Messages.emailFailed);
+        errorToast(Messages.emailVerificationFailed);
       }
     }
     if (mounted) {
@@ -97,6 +98,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredEmail;
+                          } else if (!validateEmail(value)) {
+                            return Messages.inValidEmail;
                           }
                           return null;
                         },

@@ -105,7 +105,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredOTP;
-                          } else if (value.length < 8) {
+                          } else if (value.length < 6) {
                             return Messages.otpLength;
                           }
                           return null;

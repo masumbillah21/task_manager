@@ -61,6 +61,7 @@ class TaskManagerApp extends StatelessWidget {
           color: colorGreen,
         ),
         scaffoldBackgroundColor: colorGreen,
+        primarySwatch: Colors.green,
       ),
       initialRoute: SplashScreen.routeName,
       routes: {
