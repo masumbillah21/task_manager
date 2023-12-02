@@ -131,14 +131,17 @@ class _TaskListCardState extends State<TaskListCard> {
   Future<void> _showDeleteAlert(String id) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Warning'),
           content: const Text('Do you really want to delete this task?'),
           actions: <Widget>[
             TextButton(
-              child: const Text('Yes'),
+              child: const Text(
+                'Yes',
+                style: TextStyle(color: colorRed),
+              ),
               onPressed: () async {
                 if (mounted) {
                   Navigator.of(context).pop();
