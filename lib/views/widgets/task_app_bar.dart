@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
-import 'package:task_manager/utility/utilites.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
 import 'package:task_manager/views/screens/profile/profile_update_screen.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -20,6 +19,9 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
+  Size get preferredSize => const Size.fromHeight(70);
+
+  @override
   Widget build(BuildContext context) {
     String photo = AuthController.user?.photo ?? '';
     return PreferredSize(
@@ -32,14 +34,8 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
             }
           },
           leading: photo.isNotEmpty
-              ? CircleAvatar(
-                  backgroundColor: colorWhite,
-                  backgroundImage: MemoryImage(showBase64Image(photo)),
-                )
-              : const CircleAvatar(
-                  backgroundColor: colorWhite,
-                  backgroundImage: AssetImage('assets/images/placeholder.png'),
-                ),
+              ? profileImage(imageProvider: photo)
+              : profileImage(),
           title: Text(
             fullName,
             style: const TextStyle(color: Colors.white),
@@ -61,7 +57,4 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(70);
 }

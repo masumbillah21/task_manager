@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -15,7 +13,6 @@ class ProfileImagePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("Profile Image Picker: ${photoLink?.name ?? ''}");
     double height = 50.0;
     return GestureDetector(
       onTap: onTab,

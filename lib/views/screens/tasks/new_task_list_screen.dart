@@ -3,6 +3,7 @@ import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/models/task_count_status_model.dart';
 import 'package:task_manager/models/task_model.dart';
+import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/tasks/task_create_screen.dart';
@@ -77,6 +78,7 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
     return SafeArea(
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
+          elevation: 3.0,
           backgroundColor: colorGreen,
           foregroundColor: colorWhite,
           shape: RoundedRectangleBorder(
@@ -141,7 +143,7 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
                           )
                         : _taskList.taskList!.isEmpty
                             ? const Center(
-                                child: Text('There is no task to show!!'),
+                                child: Text(Messages.emptyTask),
                               )
                             : ListView.builder(
                                 itemCount: _taskList.taskList?.length ?? 0,

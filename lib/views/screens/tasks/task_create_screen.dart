@@ -47,7 +47,7 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
           setState(() {});
         }
       } else {
-        errorToast(res.errorMessage.toString());
+        errorToast(Messages.createTaskFailed);
       }
       if (mounted) {
         setState(() {
@@ -96,7 +96,7 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
                     ),
                     TextFormField(
                       controller: _subjectTEController,
-                      decoration: appInputDecoration("Subject"),
+                      decoration: const InputDecoration(label: Text("Subject")),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -112,7 +112,8 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
                       textAlign: TextAlign.start,
                       controller: _desTEController,
                       maxLines: 10,
-                      decoration: appInputDecoration("Description"),
+                      decoration:
+                          const InputDecoration(label: Text("Description")),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -131,8 +132,7 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
                           child: CircularProgressIndicator(),
                         ),
                         child: ElevatedButton(
-                          style: appButtonStyle(),
-                          child: successButtonChild(),
+                          child: buttonChild(),
                           onPressed: () {
                             _createNewTask(context);
                           },

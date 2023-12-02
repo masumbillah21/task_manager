@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
-import 'package:task_manager/views/style/style.dart';
+import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = "/";
@@ -37,16 +37,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          screenBackground(context),
-          Center(
-            child: SvgPicture.asset(
-              "assets/images/logo.svg",
-              alignment: Alignment.center,
-            ),
-          )
-        ],
+      body: TaskBackgroundContainer(
+        child: Center(
+          child: SvgPicture.asset(
+            "assets/images/logo.svg",
+            alignment: Alignment.center,
+          ),
+        ),
       ),
     );
   }

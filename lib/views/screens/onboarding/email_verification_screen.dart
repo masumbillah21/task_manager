@@ -43,7 +43,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         Navigator.pushReplacementNamed(
             context, OTPVerificationScreen.routeName);
       } else {
-        errorToast(res.errorMessage);
+        errorToast(Messages.emailFailed);
       }
     }
     if (mounted) {
@@ -91,11 +91,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                       ),
                       TextFormField(
                         controller: _emailTEController,
-                        decoration: appInputDecoration("Email Address"),
+                        decoration:
+                            const InputDecoration(label: Text("Email Address")),
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Email is required';
+                            return Messages.requiredEmail;
                           }
                           return null;
                         },
@@ -110,8 +111,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                             child: CircularProgressIndicator(),
                           ),
                           child: ElevatedButton(
-                            style: appButtonStyle(),
-                            child: successButtonChild(buttonText: "Next"),
+                            child: buttonChild(buttonText: "Next"),
                             onPressed: () {
                               verifyEmail(context);
                             },
@@ -135,11 +135,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                       children: [
                         Text(
                           "Already have account?",
-                          style: head2Text(colorGray),
+                          style: head3Text(colorGray),
                         ),
                         Text(
                           " Login",
-                          style: head2Text(colorGreen),
+                          style: head3Text(colorGreen),
                         ),
                       ],
                     ),

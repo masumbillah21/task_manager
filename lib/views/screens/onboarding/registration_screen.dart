@@ -47,7 +47,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           Navigator.pushReplacementNamed(context, LoginScreen.routeName);
         }
       } else {
-        errorToast(response.errorMessage);
+        errorToast(Messages.registrationFailed);
       }
     }
 
@@ -93,10 +93,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _emailTEController,
-                        decoration: appInputDecoration("Email Address"),
+                        decoration:
+                            const InputDecoration(label: Text("Email Address")),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Email is required.';
+                            return Messages.requiredEmail;
                           }
                           return null;
                         },
@@ -106,10 +107,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _firstNameTEController,
-                        decoration: appInputDecoration("First Name"),
+                        decoration:
+                            const InputDecoration(label: Text("First Name")),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'First name is required.';
+                            return Messages.requiredFirstName;
                           }
                           return null;
                         },
@@ -119,10 +121,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _lastNameTEController,
-                        decoration: appInputDecoration("Last Name"),
+                        decoration:
+                            const InputDecoration(label: Text("Last Name")),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Last name is required.';
+                            return Messages.requiredLastName;
                           }
                           return null;
                         },
@@ -132,11 +135,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _mobileTEController,
-                        decoration: appInputDecoration("Mobile Number"),
+                        decoration:
+                            const InputDecoration(label: Text("Mobile Number")),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Mobile is required.';
+                            return Messages.requiredMobileNumber;
+                          } else if (value.length < 11) {
+                            return Messages.mobileNumberLength;
                           }
                           return null;
                         },
@@ -146,13 +152,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _passwordTEController,
-                        decoration: appInputDecoration("Password"),
+                        decoration:
+                            const InputDecoration(label: Text("Password")),
                         obscureText: true,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Password required.';
-                          } else if (int.parse(value) < 8) {
-                            return 'Password must be at least 8 characters long.';
+                            return Messages.requiredPassword;
+                          } else if (value.length < 8) {
+                            return Messages.passwordLength;
                           }
                           return null;
                         },
@@ -167,8 +174,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             child: CircularProgressIndicator(),
                           ),
                           child: ElevatedButton(
-                            style: appButtonStyle(),
-                            child: successButtonChild(),
+                            child: buttonChild(),
                             onPressed: () {
                               registration(context);
                             },
@@ -192,11 +198,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       children: [
                         Text(
                           "Already have account?",
-                          style: head2Text(colorGray),
+                          style: head3Text(colorGray),
                         ),
                         Text(
                           " Login",
-                          style: head2Text(colorGreen),
+                          style: head3Text(colorGreen),
                         ),
                       ],
                     ),

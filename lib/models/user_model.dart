@@ -5,7 +5,7 @@ class UserModel {
   String? firstName;
   String? lastName;
   String? mobile;
-  String? photo;
+  String? photo = '';
   String? password;
   String? otp;
 

@@ -73,7 +73,8 @@ class _TaskListCardState extends State<TaskListCard> {
                   child: DropdownButtonFormField<String>(
                     value: widget.taskList.status,
                     isExpanded: true,
-                    decoration: appInputDecoration('Task Status'),
+                    decoration:
+                        const InputDecoration(label: Text("Task Status")),
                     items: StatusEnum.values
                         .map<DropdownMenuItem<String>>((StatusEnum value) {
                       return DropdownMenuItem<String>(
@@ -98,8 +99,7 @@ class _TaskListCardState extends State<TaskListCard> {
                     }
                     _updateTaskStatus();
                   },
-                  style: appButtonStyle(),
-                  child: successButtonChild(),
+                  child: buttonChild(),
                 ),
               ],
             )

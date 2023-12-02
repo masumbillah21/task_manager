@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:task_manager/utility/utilities.dart';
 
 const Color colorRed = Color.fromRGBO(231, 28, 36, 1);
 const Color colorPink = Color.fromRGBO(203, 12, 159, 1);
@@ -72,42 +72,12 @@ TextStyle head4Text(Color textColor) {
       fontWeight: FontWeight.w800);
 }
 
-InputDecoration appInputDecoration(String label) {
-  return InputDecoration(
-      focusedBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: colorGreen, width: 1),
-      ),
-      fillColor: colorWhite,
-      filled: true,
-      contentPadding: const EdgeInsets.fromLTRB(20, 10, 10, 20),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: colorWhite, width: 0.0),
-      ),
-      border: const OutlineInputBorder(),
-      labelText: label,
-      alignLabelWithHint: true);
-}
-
-SvgPicture screenBackground(context) {
-  return SvgPicture.asset(
-    'assets/images/background.svg',
-    alignment: Alignment.center,
-    width: MediaQuery.of(context).size.width,
-    height: MediaQuery.of(context).size.height,
-    fit: BoxFit.cover,
-  );
-}
-
-ButtonStyle appButtonStyle() {
-  return ElevatedButton.styleFrom(
-    elevation: 1,
-    padding: EdgeInsets.zero,
-    backgroundColor: Colors.transparent,
-    foregroundColor: colorWhite,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(6),
-    ),
-  );
+TextStyle head5Text(Color textColor) {
+  return TextStyle(
+      color: textColor,
+      fontSize: 13,
+      fontFamily: 'poppins',
+      fontWeight: FontWeight.w500);
 }
 
 TextStyle buttonTextStyle() {
@@ -119,7 +89,7 @@ TextStyle buttonTextStyle() {
   );
 }
 
-Ink successButtonChild({String buttonText = ''}) {
+Ink buttonChild({String buttonText = ''}) {
   return Ink(
     decoration: BoxDecoration(
       color: colorGreen,
@@ -152,24 +122,40 @@ Widget appStatusBar({String? taskStatus, Color? backgroundColor}) {
   );
 }
 
+Widget profileImage({imageProvider, double radius = 25}) {
+  return imageProvider != null
+      ? CircleAvatar(
+          radius: radius,
+          backgroundColor: colorWhite,
+          backgroundImage: MemoryImage(showBase64Image(imageProvider)),
+        )
+      : CircleAvatar(
+          radius: radius,
+          backgroundColor: colorWhite,
+          backgroundImage: const AssetImage("assets/images/placeholder.png"),
+        );
+}
+
 void successToast(msg) {
   Fluttertoast.showToast(
-      msg: msg,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      toastLength: Toast.LENGTH_SHORT,
-      backgroundColor: colorGreen,
-      textColor: colorWhite,
-      fontSize: 16.0);
+    msg: msg,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 1,
+    toastLength: Toast.LENGTH_SHORT,
+    backgroundColor: colorGreen,
+    textColor: colorWhite,
+    fontSize: 16.0,
+  );
 }
 
 void errorToast(msg) {
   Fluttertoast.showToast(
-      msg: msg,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      toastLength: Toast.LENGTH_SHORT,
-      backgroundColor: colorRed,
-      textColor: colorWhite,
-      fontSize: 16.0);
+    msg: msg,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 1,
+    toastLength: Toast.LENGTH_SHORT,
+    backgroundColor: colorRed,
+    textColor: colorWhite,
+    fontSize: 16.0,
+  );
 }

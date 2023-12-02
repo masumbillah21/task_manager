@@ -1,6 +1,6 @@
 class Messages {
   static const String loginSuccess = "Login success.";
-  static const String loginFailed = "Login failed.";
+  static const String loginFailed = "Email or password is incorrect.";
 
   static const String registrationSuccess = "Registration success.";
   static const String registrationFailed = "Registration failed.";
@@ -26,4 +26,20 @@ class Messages {
 
   static const String taskDeleteSuccess = "Task deleted.";
   static const String taskDeleteFailed = "Failed to delete task.";
+
+  static const String emptyTask = "There is no task to show!!";
+
+  static const String requiredEmail = 'Email is required';
+  static const String requiredFirstName = 'First name is required';
+  static const String requiredLastName = 'Last name is required';
+  static const String requiredMobileNumber = 'Mobile number is required';
+  static const String mobileNumberLength = 'Invalid mobile number';
+  static const String requiredPassword = 'Password is required';
+  static const String requiredConfirmPassword = 'Confirm password is required';
+  static const String missMatchConfirmPassword =
+      'Password & confirm password are not same';
+  static const String passwordLength =
+      'Password must be at least 8 characters.';
+  static const String requiredOTP = 'OTP is required';
+  static const String otpLength = 'OTP must be 6 digits.';
 }

@@ -29,6 +29,37 @@ class TaskManagerApp extends StatelessWidget {
           backgroundColor: colorGreen,
           foregroundColor: colorWhite,
         ),
+        textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+          foregroundColor: colorDarkBlue,
+        )),
+        inputDecorationTheme: const InputDecorationTheme(
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: colorGreen, width: 1),
+          ),
+          fillColor: colorWhite,
+          filled: true,
+          contentPadding: EdgeInsets.fromLTRB(20, 10, 10, 20),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: colorWhite, width: 0.0),
+          ),
+          border: OutlineInputBorder(),
+          alignLabelWithHint: true,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 1,
+            padding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            foregroundColor: colorWhite,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+          ),
+        ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: colorGreen,
+        ),
         scaffoldBackgroundColor: colorGreen,
       ),
       initialRoute: SplashScreen.routeName,

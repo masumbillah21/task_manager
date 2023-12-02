@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
               context, BottomNavigationScreen.routeName, (route) => false);
         }
       } else {
-        successToast(response.errorMessage);
+        successToast(Messages.loginFailed);
       }
     }
 
@@ -101,11 +101,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextFormField(
                         controller: _emailTEController,
-                        decoration: appInputDecoration("Email Address"),
+                        decoration:
+                            const InputDecoration(label: Text("Email Address")),
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Email required.';
+                            return Messages.requiredEmail;
                           }
                           return null;
                         },
@@ -115,13 +116,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextFormField(
                         controller: _passwordTEController,
-                        decoration: appInputDecoration("Password"),
+                        decoration:
+                            const InputDecoration(label: Text("Password")),
                         obscureText: true,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Password required.';
-                          } else if (int.parse(value) < 8) {
-                            return 'Password must be at least 8 characters long.';
+                            return Messages.requiredPassword;
+                          } else if (value.length < 8) {
+                            return Messages.passwordLength;
                           }
                           return null;
                         },
@@ -136,8 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: CircularProgressIndicator(),
                           ),
                           child: ElevatedButton(
-                            style: appButtonStyle(),
-                            child: successButtonChild(),
+                            child: buttonChild(),
                             onPressed: () {
                               login(context);
                             },
@@ -159,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       "Forgot password?",
-                      style: head2Text(colorGray),
+                      style: head3Text(colorGray),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -179,11 +180,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Text(
                           "Don't have account?",
-                          style: head2Text(colorGray),
+                          style: head3Text(colorGray),
                         ),
                         Text(
                           " Sign Up",
-                          style: head2Text(colorGreen),
+                          style: head3Text(colorGreen),
                         ),
                       ],
                     ),

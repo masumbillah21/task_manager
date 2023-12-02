@@ -13,18 +13,23 @@ class CounterContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Container(
-        width: 100,
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "$taskNumber",
-              style: head1Text(Colors.black),
-            ),
-            Text(taskStatus),
-          ],
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 90),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                taskNumber > 0 ? taskNumber.toString().padLeft(2, '0') : '0',
+                style: head2Text(Colors.black),
+              ),
+              Text(
+                taskStatus,
+                style: head5Text(colorDarkBlue),
+              ),
+            ],
+          ),
         ),
       ),
     );

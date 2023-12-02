@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/models/task_model.dart';
+import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
@@ -59,7 +60,7 @@ class _CancelledTaskListScreenState extends State<CancelledTaskListScreen> {
                 )
               : _taskList.taskList!.isEmpty
                   ? const Center(
-                      child: Text('Task is empty.'),
+                      child: Text(Messages.emptyTask),
                     )
                   : ListView.builder(
                       itemCount: _taskList.taskList?.length ?? 0,

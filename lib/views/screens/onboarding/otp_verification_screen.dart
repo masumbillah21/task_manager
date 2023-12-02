@@ -100,9 +100,16 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         animationDuration: const Duration(microseconds: 300),
                         enableActiveFill: true,
                         onCompleted: (value) {
-                          //_verifyPicCode(context);
+                          _verifyPicCode(context);
                         },
-                        onChanged: (value) {},
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return Messages.requiredOTP;
+                          } else if (value.length < 8) {
+                            return Messages.otpLength;
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(
                         height: 20,
@@ -114,8 +121,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                             child: CircularProgressIndicator(),
                           ),
                           child: ElevatedButton(
-                            style: appButtonStyle(),
-                            child: successButtonChild(buttonText: "Verify"),
+                            child: buttonChild(buttonText: "Verify"),
                             onPressed: () {
                               _verifyPicCode(context);
                             },

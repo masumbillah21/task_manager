@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,7 +8,6 @@ import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/urls.dart';
-import 'package:task_manager/utility/utilites.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/profile_image_picker.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
@@ -129,7 +126,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
         AuthController.saveUserToReset(model: formValue);
         successToast(Messages.profileUpdateSuccess);
       } else {
-        errorToast(res.errorMessage);
+        errorToast(Messages.profileUpdateFailed);
       }
     }
 
@@ -162,7 +159,6 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    log("userModel:$_photoInBase64");
     return Scaffold(
       appBar: const TaskAppBar(
         enableProfile: false,
@@ -187,26 +183,9 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   Container(
                     alignment: Alignment.center,
                     child: _photoInBase64.isNotEmpty
-                        ? CircleAvatar(
-                            radius: 60,
-                            backgroundColor: colorWhite,
-                            backgroundImage:
-                                MemoryImage(showBase64Image(_photoInBase64)),
-                          )
-                        : _imageFile != null
-                            ? CircleAvatar(
-                                radius: 60,
-                                backgroundColor: colorWhite,
-                                backgroundImage: FileImage(
-                                  File(_imageFile?.path ?? ''),
-                                ),
-                              )
-                            : const CircleAvatar(
-                                radius: 60,
-                                backgroundColor: colorWhite,
-                                backgroundImage:
-                                    AssetImage("assets/images/placeholder.png"),
-                              ),
+                        ? profileImage(
+                            imageProvider: _photoInBase64, radius: 60)
+                        : profileImage(radius: 60),
                   ),
                   const SizedBox(
                     height: 20,
@@ -220,10 +199,11 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _emailTEController,
-                    decoration: appInputDecoration("Email Address"),
+                    decoration:
+                        const InputDecoration(label: Text("Email Address")),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Email is required.';
+                        return Messages.requiredEmail;
                       }
                       return null;
                     },
@@ -233,10 +213,11 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _firstNameTEController,
-                    decoration: appInputDecoration("First Name"),
+                    decoration:
+                        const InputDecoration(label: Text("First Name")),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'First name is required.';
+                        return Messages.requiredFirstName;
                       }
                       return null;
                     },
@@ -246,10 +227,10 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _lastNameTEController,
-                    decoration: appInputDecoration("Last Name"),
+                    decoration: const InputDecoration(label: Text("Last Name")),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Last name is required.';
+                        return Messages.requiredLastName;
                       }
                       return null;
                     },
@@ -259,11 +240,14 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _mobileTEController,
-                    decoration: appInputDecoration("Mobile Number"),
+                    decoration:
+                        const InputDecoration(label: Text("Mobile Number")),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Mobile is required.';
+                        return Messages.requiredMobileNumber;
+                      } else if (value.length < 11) {
+                        return Messages.mobileNumberLength;
                       }
                       return null;
                     },
@@ -273,12 +257,12 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _passwordTEController,
-                    decoration: appInputDecoration("Password"),
+                    decoration: const InputDecoration(label: Text("Password")),
                     obscureText: true,
                     validator: (value) {
                       if (value!.isNotEmpty) {
-                        if (int.parse(value) < 8) {
-                          return 'Password must be at least 8 characters long.';
+                        if (value.length < 8) {
+                          return Messages.passwordLength;
                         }
                       }
                       return null;
@@ -293,8 +277,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                       replacement:
                           const Center(child: CircularProgressIndicator()),
                       child: ElevatedButton(
-                        style: appButtonStyle(),
-                        child: successButtonChild(),
+                        child: buttonChild(),
                         onPressed: () {
                           _updateProfile();
                         },

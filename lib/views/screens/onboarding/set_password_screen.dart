@@ -46,7 +46,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         Navigator.pushNamedAndRemoveUntil(
             context, LoginScreen.routeName, (route) => false);
       } else {
-        errorToast(res.errorMessage);
+        errorToast(Messages.passwordResetFailed);
       }
     }
     if (mounted) {
@@ -90,11 +90,13 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 ),
                 TextFormField(
                   controller: _passwordTEController,
-                  decoration: appInputDecoration("Password"),
+                  decoration: const InputDecoration(label: Text("Password")),
                   obscureText: true,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Confirm password required';
+                      return Messages.requiredPassword;
+                    } else if (value.length < 8) {
+                      return Messages.passwordLength;
                     }
                     return null;
                   },
@@ -106,13 +108,14 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   height: 20,
                 ),
                 TextFormField(
-                  decoration: appInputDecoration("Confirm Password"),
+                  decoration:
+                      const InputDecoration(label: Text("Confirm Password")),
                   obscureText: true,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Confirm password required';
+                      return Messages.requiredConfirmPassword;
                     } else if (value != _confirmPassword) {
-                      return 'Password & confirm password are not same.';
+                      return Messages.missMatchConfirmPassword;
                     }
                     return null;
                   },
@@ -127,8 +130,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                       child: CircularProgressIndicator(),
                     ),
                     child: ElevatedButton(
-                      style: appButtonStyle(),
-                      child: successButtonChild(buttonText: "Set Password"),
+                      child: buttonChild(buttonText: "Set Password"),
                       onPressed: () {
                         setPassword(context);
                       },
