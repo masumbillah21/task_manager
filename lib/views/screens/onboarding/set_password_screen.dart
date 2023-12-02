@@ -30,8 +30,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       });
     }
     if (_formKey.currentState!.validate()) {
-      String? email = AuthController.user?.email ?? '';
-      String? otp = AuthController.user?.otp ?? '';
+      String? email = AuthController.user.value?.email ?? '';
+      String? otp = AuthController.user.value?.otp ?? '';
 
       UserModel formValue = UserModel(
         email: email,

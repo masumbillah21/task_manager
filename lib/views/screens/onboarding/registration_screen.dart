@@ -37,6 +37,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         lastName: _lastNameTEController.text.trim(),
         mobile: _mobileTEController.text.trim(),
         password: _passwordTEController.text,
+        photo: '',
       );
 
       ApiResponse response = await ApiClient().apiPostRequest(

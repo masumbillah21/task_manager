@@ -31,7 +31,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       });
     }
     if (_formKey.currentState!.validate()) {
-      String? email = AuthController.user?.email ?? '';
+      String? email = AuthController.user.value?.email ?? '';
 
       ApiResponse res = await ApiClient().apiGetRequest(
           url: Urls.recoverVerifyOTP(email, _pinCodeCTEController.text.trim()));

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
-import 'package:task_manager/models/task_model.dart';
+import 'package:task_manager/controllers/task_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/utility/urls.dart';
@@ -17,7 +17,7 @@ class ProgressTaskListScreen extends StatefulWidget {
 }
 
 class _ProgressTaskListScreenState extends State<ProgressTaskListScreen> {
-  TaskModel _taskList = TaskModel();
+  TaskController _taskList = TaskController();
   bool _isLoading = false;
 
   Future<void> _getTakList() async {
@@ -30,7 +30,7 @@ class _ProgressTaskListScreenState extends State<ProgressTaskListScreen> {
     ApiResponse res = await ApiClient().apiGetRequest(
         url: "${Urls.listTaskByStatus}/${StatusEnum.Progress.name}");
     if (res.isSuccess) {
-      _taskList = TaskModel.fromJson(res.jsonResponse);
+      _taskList = TaskController.fromJson(res.jsonResponse);
     }
     if (mounted) {
       setState(() {

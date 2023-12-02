@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -19,7 +18,6 @@ class ApiClient {
     required String formValue,
     bool isLogin = false,
   }) async {
-    log('Form: $formValue');
     try {
       var uri = Uri.parse(url);
       var response =

@@ -8,7 +8,7 @@ import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/style/style.dart';
 
 class TaskListCard extends StatefulWidget {
-  final Task taskList;
+  final TaskModel taskList;
   final VoidCallback getStatusUpdate;
   final Function(bool) inProgress;
 

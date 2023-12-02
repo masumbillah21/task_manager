@@ -26,12 +26,41 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
   final _formKey = GlobalKey<FormState>();
   XFile? _imageFile;
   bool _inProgress = false;
-  String _photoInBase64 = AuthController.user?.photo ?? '';
+  String _photoInBase64 = AuthController.user.value?.photo ?? '';
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
+
+  Future<void> _takePhoto({bool isGallery = false}) async {
+    final XFile? photo;
+    if (isGallery) {
+      photo = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 400,
+        maxWidth: 400,
+      );
+    } else {
+      photo = await picker.pickImage(
+        source: ImageSource.camera,
+        maxHeight: 400,
+        maxWidth: 400,
+      );
+    }
+
+    if (photo != null) {
+      List<int> imageBytes = await photo.readAsBytes();
+
+      if (mounted) {
+        Navigator.pop(context);
+        setState(() {
+          _photoInBase64 = base64Encode(imageBytes);
+          _imageFile = photo;
+        });
+      }
+    }
+  }
 
   void _showPhotoDialogBox() {
     showDialog(
@@ -61,23 +90,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
               title: const Text('Take Photo'),
               onTap: () async {
                 // Capture a photo.
-                final XFile? photo = await picker.pickImage(
-                  source: ImageSource.camera,
-                  maxHeight: 400,
-                  maxWidth: 400,
-                );
-
-                if (photo != null) {
-                  List<int> imageBytes = await photo.readAsBytes();
-
-                  if (mounted) {
-                    Navigator.pop(context);
-                    setState(() {
-                      _photoInBase64 = base64Encode(imageBytes);
-                      _imageFile = photo;
-                    });
-                  }
-                }
+                _takePhoto();
               },
             ),
             ListTile(
@@ -85,17 +98,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
               title: const Text('Upload from gallery'),
               onTap: () async {
                 // Pick an image.
-                final XFile? image = await picker.pickImage(
-                  source: ImageSource.gallery,
-                  maxHeight: 400,
-                  maxWidth: 400,
-                );
-                if (mounted) {
-                  setState(() {
-                    _imageFile = image;
-                  });
-                  Navigator.pop(context);
-                }
+                _takePhoto(isGallery: true);
               },
             )
           ],
@@ -139,7 +142,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
 
   @override
   void initState() {
-    var user = AuthController.user;
+    var user = AuthController.user.value;
     _emailTEController.text = user?.email ?? '';
     _firstNameTEController.text = user?.firstName ?? '';
     _lastNameTEController.text = user?.lastName ?? '';

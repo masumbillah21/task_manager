@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
-import 'package:task_manager/models/task_count_status_model.dart';
-import 'package:task_manager/models/task_model.dart';
+import 'package:task_manager/controllers/task_controller.dart';
+import 'package:task_manager/controllers/task_count_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/utility/urls.dart';
@@ -21,8 +21,8 @@ class NewTaskListScreen extends StatefulWidget {
 }
 
 class _NewTaskListScreenState extends State<NewTaskListScreen> {
-  TaskModel _taskList = TaskModel();
-  TaskStatusCountModel _taskStatusCount = TaskStatusCountModel();
+  TaskController _taskList = TaskController();
+  TaskCountController _taskStatusCount = TaskCountController();
   bool _isLoading = false;
   bool _isCountLoading = false;
 
@@ -37,7 +37,7 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
         await ApiClient().apiGetRequest(url: Urls.taskStatusCount);
 
     if (res.isSuccess) {
-      _taskStatusCount = TaskStatusCountModel.fromJson(res.jsonResponse);
+      _taskStatusCount = TaskCountController.fromJson(res.jsonResponse);
     }
 
     if (mounted) {
@@ -57,7 +57,7 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
     ApiResponse res = await ApiClient()
         .apiGetRequest(url: "${Urls.listTaskByStatus}/${StatusEnum.New.name}");
     if (res.isSuccess) {
-      _taskList = TaskModel.fromJson(res.jsonResponse);
+      _taskList = TaskController.fromJson(res.jsonResponse);
     }
     if (mounted) {
       setState(() {
