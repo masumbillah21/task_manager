@@ -92,6 +92,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       PinCodeTextField(
                         controller: _pinCodeCTEController,
                         keyboardType: TextInputType.number,
+                        backgroundColor: Colors.transparent,
                         appContext: context,
                         autoDisposeControllers: false,
                         length: 6,
@@ -99,9 +100,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         animationType: AnimationType.fade,
                         animationDuration: const Duration(microseconds: 300),
                         enableActiveFill: true,
-                        onCompleted: (value) {
-                          _verifyPicCode(context);
-                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredOTP;
