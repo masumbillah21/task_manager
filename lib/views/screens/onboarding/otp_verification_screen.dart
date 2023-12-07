@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
@@ -11,7 +12,7 @@ import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
-  static const routeName = "./pin-verification";
+  static const routeName = "/pin-verification";
 
   const OTPVerificationScreen({super.key});
 
@@ -31,12 +32,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       });
     }
     if (_formKey.currentState!.validate()) {
-      String? email = AuthController.user.value?.email ?? '';
+      String? email = Get.find<AuthController>().user?.email ?? '';
 
       ApiResponse res = await ApiClient().apiGetRequest(
           url: Urls.recoverVerifyOTP(email, _pinCodeCTEController.text.trim()));
       if (res.isSuccess) {
-        AuthController.saveUserToReset(
+        Get.find<AuthController>().saveUserToReset(
             model: UserModel.fromJson(
                 {'email': email, 'OTP': _pinCodeCTEController.text.trim()}));
         successToast(Messages.otpSuccess);

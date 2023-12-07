@@ -1,6 +1,7 @@
+import 'package:get/get.dart';
 import 'package:task_manager/models/task_count_model.dart';
 
-class TaskCountController {
+class TaskCountController extends GetxController {
   String? status;
   List<TaskCountModel>? taskStatusCount;
 

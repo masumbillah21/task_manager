@@ -9,7 +9,7 @@ import 'package:task_manager/views/widgets/task_background_container.dart';
 import 'package:task_manager/views/widgets/task_list_card.dart';
 
 class CompletedTaskListScreen extends StatefulWidget {
-  static const routeName = "./completed-task";
+  static const routeName = "/completed-task";
   const CompletedTaskListScreen({super.key});
 
   @override

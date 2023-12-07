@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
@@ -15,7 +16,7 @@ import 'package:task_manager/views/widgets/task_app_bar.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class ProfileUpdateScreen extends StatefulWidget {
-  static const routeName = "./profile-update";
+  static const routeName = "/profile-update";
   const ProfileUpdateScreen({super.key});
 
   @override
@@ -27,7 +28,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
   final _formKey = GlobalKey<FormState>();
   XFile? _imageFile;
   bool _inProgress = false;
-  String _photoInBase64 = AuthController.user.value?.photo ?? '';
+  String _photoInBase64 = Get.find<AuthController>().user?.photo ?? '';
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
@@ -127,7 +128,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
       ApiResponse res = await ApiClient().apiPostRequest(
           url: Urls.profileUpdate, formValue: formValue.toJson());
       if (res.isSuccess) {
-        AuthController.saveUserToReset(model: formValue);
+        Get.find<AuthController>().saveUserToReset(model: formValue);
         successToast(Messages.profileUpdateSuccess);
       } else {
         errorToast(Messages.profileUpdateFailed);
@@ -143,7 +144,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
 
   @override
   void initState() {
-    var user = AuthController.user.value;
+    var user = Get.find<AuthController>().user;
     _emailTEController.text = user?.email ?? '';
     _firstNameTEController.text = user?.firstName ?? '';
     _lastNameTEController.text = user?.lastName ?? '';

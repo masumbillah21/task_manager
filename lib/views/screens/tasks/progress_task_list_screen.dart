@@ -9,7 +9,7 @@ import 'package:task_manager/views/widgets/task_background_container.dart';
 import 'package:task_manager/views/widgets/task_list_card.dart';
 
 class ProgressTaskListScreen extends StatefulWidget {
-  static const routeName = "./progress-task";
+  static const routeName = "/progress-task";
   const ProgressTaskListScreen({super.key});
 
   @override

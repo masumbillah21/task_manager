@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
@@ -10,7 +11,7 @@ import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class SetPasswordScreen extends StatefulWidget {
-  static const routeName = "./set-password";
+  static const routeName = "/set-password";
   const SetPasswordScreen({super.key});
 
   @override
@@ -30,8 +31,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       });
     }
     if (_formKey.currentState!.validate()) {
-      String? email = AuthController.user.value?.email ?? '';
-      String? otp = AuthController.user.value?.otp ?? '';
+      String? email = Get.find<AuthController>().user?.email ?? '';
+      String? otp = Get.find<AuthController>().user?.otp ?? '';
 
       UserModel formValue = UserModel(
         email: email,

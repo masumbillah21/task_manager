@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/models/user_model.dart';
@@ -10,7 +11,7 @@ import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  static const routeName = "./registration";
+  static const routeName = "/registration";
   const RegistrationScreen({super.key});
 
   @override
@@ -45,9 +46,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           formValue: formValue.toJson(), url: Urls.registration);
       if (response.isSuccess) {
         successToast(Messages.registrationSuccess);
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-        }
+        Get.offAllNamed(LoginScreen.routeName);
       } else {
         errorToast(Messages.registrationFailed);
       }
@@ -197,7 +196,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   width: MediaQuery.sizeOf(context).width,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, LoginScreen.routeName);
+                      Get.toNamed(LoginScreen.routeName);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

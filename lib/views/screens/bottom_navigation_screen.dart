@@ -8,7 +8,7 @@ import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
-  static const routeName = './bottom-navigation';
+  static const routeName = '/bottom-navigation';
   const BottomNavigationScreen({
     super.key,
   });

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/api/api_caller.dart';
-import 'package:task_manager/api/api_response.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
-import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/messages.dart';
-import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/views/screens/onboarding/email_verification_screen.dart';
@@ -13,7 +10,7 @@ import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const routeName = './login';
+  static const routeName = '/login';
   const LoginScreen({super.key});
 
   @override
@@ -21,44 +18,22 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
-  bool _inProgress = false;
-
-  Future<void> login(context) async {
-    if (mounted) {
-      setState(() {
-        _inProgress = true;
-      });
-    }
-
+  final _formKey = GlobalKey<FormState>();
+  Future<void> login() async {
     if (_formKey.currentState!.validate()) {
-      UserModel formValue = UserModel(
-        email: _emailTEController.text.trim(),
-        password: _passwordTEController.text,
+      bool response = await Get.find<AuthController>().userLogin(
+        _emailTEController.text.trim(),
+        _passwordTEController.text,
       );
-
-      ApiResponse response = await ApiClient().apiPostRequest(
-          formValue: formValue.toJson(), url: Urls.login, isLogin: true);
-      if (response.isSuccess) {
+      if (response) {
         successToast(Messages.loginSuccess);
-        await AuthController.saveUserInfo(
-            userToken: response.jsonResponse['token'],
-            model: UserModel.fromJson(response.jsonResponse['data']));
-        if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, BottomNavigationScreen.routeName, (route) => false);
-        }
+
+        Get.offAllNamed(BottomNavigationScreen.routeName);
       } else {
         successToast(Messages.loginFailed);
       }
-    }
-
-    if (mounted) {
-      setState(() {
-        _inProgress = false;
-      });
     }
   }
 
@@ -135,18 +110,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 20,
                       ),
                       SizedBox(
-                        child: Visibility(
-                          visible: _inProgress == false,
-                          replacement: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                          child: ElevatedButton(
-                            child: buttonChild(),
-                            onPressed: () {
-                              login(context);
-                            },
-                          ),
-                        ),
+                        child: GetBuilder<AuthController>(
+                            builder: (authController) {
+                          return Visibility(
+                            visible: !authController.inProgress,
+                            replacement: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            child: ElevatedButton(
+                              child: buttonChild(),
+                              onPressed: () {
+                                login();
+                              },
+                            ),
+                          );
+                        }),
                       )
                     ],
                   ),
@@ -158,8 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: MediaQuery.sizeOf(context).width,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(
-                          context, EmailVerificationScreen.routeName);
+                      Get.toNamed(EmailVerificationScreen.routeName);
                     },
                     child: Text(
                       "Forgot password?",
@@ -175,8 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: MediaQuery.sizeOf(context).width,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(
-                          context, RegistrationScreen.routeName);
+                      Get.toNamed(RegistrationScreen.routeName);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

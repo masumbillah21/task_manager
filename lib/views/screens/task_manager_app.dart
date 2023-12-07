@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/views/screens/onboarding/email_verification_screen.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
@@ -21,9 +23,10 @@ class TaskManagerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: "Task Manager",
       navigatorKey: navigationKey,
+      initialBinding: TaskManagerDependency(),
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
           backgroundColor: colorGreen,
@@ -64,27 +67,50 @@ class TaskManagerApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       initialRoute: SplashScreen.routeName,
-      routes: {
-        SplashScreen.routeName: (context) => const SplashScreen(),
-        LoginScreen.routeName: (context) => const LoginScreen(),
-        RegistrationScreen.routeName: (context) => const RegistrationScreen(),
-        EmailVerificationScreen.routeName: (context) =>
-            const EmailVerificationScreen(),
-        OTPVerificationScreen.routeName: (context) =>
-            const OTPVerificationScreen(),
-        SetPasswordScreen.routeName: (context) => const SetPasswordScreen(),
-        BottomNavigationScreen.routeName: (context) =>
-            const BottomNavigationScreen(),
-        NewTaskListScreen.routeName: (context) => const NewTaskListScreen(),
-        ProgressTaskListScreen.routeName: (context) =>
-            const ProgressTaskListScreen(),
-        CompletedTaskListScreen.routeName: (context) =>
-            const CompletedTaskListScreen(),
-        CancelledTaskListScreen.routeName: (context) =>
-            const CancelledTaskListScreen(),
-        TaskCreateScreen.routeName: (context) => const TaskCreateScreen(),
-        ProfileUpdateScreen.routeName: (context) => const ProfileUpdateScreen(),
-      },
+      getPages: [
+        GetPage(name: SplashScreen.routeName, page: () => const SplashScreen()),
+        GetPage(name: LoginScreen.routeName, page: () => const LoginScreen()),
+        GetPage(
+            name: RegistrationScreen.routeName,
+            page: () => const RegistrationScreen()),
+        GetPage(
+            name: EmailVerificationScreen.routeName,
+            page: () => const EmailVerificationScreen()),
+        GetPage(
+            name: OTPVerificationScreen.routeName,
+            page: () => const OTPVerificationScreen()),
+        GetPage(
+            name: SetPasswordScreen.routeName,
+            page: () => const SetPasswordScreen()),
+        GetPage(
+            name: BottomNavigationScreen.routeName,
+            page: () => const BottomNavigationScreen()),
+        GetPage(
+            name: NewTaskListScreen.routeName,
+            page: () => const NewTaskListScreen()),
+        GetPage(
+            name: ProgressTaskListScreen.routeName,
+            page: () => const ProgressTaskListScreen()),
+        GetPage(
+            name: CompletedTaskListScreen.routeName,
+            page: () => const CompletedTaskListScreen()),
+        GetPage(
+            name: CancelledTaskListScreen.routeName,
+            page: () => const CancelledTaskListScreen()),
+        GetPage(
+            name: TaskCreateScreen.routeName,
+            page: () => const TaskCreateScreen()),
+        GetPage(
+            name: ProfileUpdateScreen.routeName,
+            page: () => const ProfileUpdateScreen()),
+      ],
     );
+  }
+}
+
+class TaskManagerDependency extends Bindings {
+  @override
+  void dependencies() {
+    Get.put(AuthController());
   }
 }

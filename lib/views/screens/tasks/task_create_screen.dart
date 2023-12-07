@@ -11,7 +11,7 @@ import 'package:task_manager/views/widgets/task_app_bar.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class TaskCreateScreen extends StatefulWidget {
-  static const routeName = "./task-create";
+  static const routeName = "/task-create";
 
   const TaskCreateScreen({super.key});
 

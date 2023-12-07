@@ -9,7 +9,7 @@ import 'package:task_manager/views/widgets/task_background_container.dart';
 import 'package:task_manager/views/widgets/task_list_card.dart';
 
 class CancelledTaskListScreen extends StatefulWidget {
-  static const routeName = "./cancel-task";
+  static const routeName = "/cancel-task";
   const CancelledTaskListScreen({super.key});
 
   @override

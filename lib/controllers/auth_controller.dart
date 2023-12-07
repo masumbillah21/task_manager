@@ -1,39 +1,70 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:task_manager/api/api_caller.dart';
+import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/models/user_model.dart';
+import 'package:task_manager/utility/urls.dart';
 
-class AuthController with ChangeNotifier {
+class AuthController extends GetxController {
   static String? token;
-  static ValueNotifier<UserModel?> user =
-      ValueNotifier<UserModel?>(UserModel());
+  UserModel? user;
 
-  static Future<void> saveUserInfo(
+  bool _inProgress = false;
+
+  bool get inProgress => _inProgress;
+
+  Future<bool> userLogin(String email, String password) async {
+    _inProgress = true;
+    update();
+
+    UserModel formValue = UserModel(
+      email: email,
+      password: password,
+    );
+
+    ApiResponse response = await ApiClient().apiPostRequest(
+        formValue: formValue.toJson(), url: Urls.login, isLogin: true);
+    _inProgress = false;
+    update();
+    if (response.isSuccess) {
+      await saveUserInfo(
+        userToken: response.jsonResponse['token'],
+        model: UserModel.fromJson(response.jsonResponse['data']),
+      );
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> saveUserInfo(
       {required String userToken, required UserModel model}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _filterProfilePhoto(model);
     await prefs.setString('token', userToken);
     await prefs.setString("user", model.toJson());
     token = userToken;
-    user.value =
-        UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
+    user = UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
+    update();
   }
 
-  static Future<void> saveUserToReset({required UserModel model}) async {
+  Future<void> saveUserToReset({required UserModel model}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _filterProfilePhoto(model);
     await prefs.setString("user", model.toJson());
-    user.value =
-        UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
+    user = UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
+    update();
   }
 
-  static Future<void> initializeUserCache() async {
+  Future<void> initializeUserCache() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
-    user.value =
-        UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
+    user = UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
   }
 
-  static Future<bool> checkAuthState() async {
+  Future<bool> checkAuthState() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null) {
@@ -48,12 +79,13 @@ class AuthController with ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     token = null;
-    user = ValueNotifier<UserModel?>(UserModel(
-        email: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-        mobile: '',
-        photo: ''));
+  }
+
+  static UserModel _filterProfilePhoto(UserModel model) {
+    if (model.photo != null && model.photo!.startsWith('data:image')) {
+      model.photo =
+          model.photo!.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), '');
+    }
+    return model;
   }
 }

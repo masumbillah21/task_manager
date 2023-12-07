@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
+import 'package:get/route_manager.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
@@ -12,7 +14,7 @@ import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
-  static const routeName = "./email-verification";
+  static const routeName = "/email-verification";
   const EmailVerificationScreen({super.key});
 
   @override
@@ -37,7 +39,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       ApiResponse res = await ApiClient().apiGetRequest(
           url: Urls.recoverVerifyEmail(_emailTEController.text.trim()));
       if (res.isSuccess) {
-        AuthController.saveUserToReset(
+        Get.find<AuthController>().saveUserToReset(
             model:
                 UserModel.fromJson({'email': _emailTEController.text.trim()}));
         successToast(Messages.emailVerificationSuccess);
@@ -131,7 +133,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   width: MediaQuery.sizeOf(context).width,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, LoginScreen.routeName);
+                      Get.toNamed(LoginScreen.routeName);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

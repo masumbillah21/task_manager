@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/controllers/task_controller.dart';
@@ -13,7 +14,7 @@ import 'package:task_manager/views/widgets/task_background_container.dart';
 import 'package:task_manager/views/widgets/task_list_card.dart';
 
 class NewTaskListScreen extends StatefulWidget {
-  static const routeName = "./new-task";
+  static const routeName = "/new-task";
   const NewTaskListScreen({super.key});
 
   @override
@@ -85,8 +86,7 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
             borderRadius: BorderRadius.circular(50),
           ),
           onPressed: () async {
-            final res =
-                await Navigator.pushNamed(context, TaskCreateScreen.routeName);
+            final res = await Get.toNamed(TaskCreateScreen.routeName);
             if (res == true) {
               _getTakStatusCount();
               _getTakList();

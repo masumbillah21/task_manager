@@ -1,6 +1,7 @@
+import 'package:get/get.dart';
 import 'package:task_manager/models/task_model.dart';
 
-class TaskController {
+class TaskController extends GetxController {
   String? status;
   List<TaskModel>? taskList;
 
