@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
-import 'package:task_manager/api/api_caller.dart';
-import 'package:task_manager/api/api_response.dart';
-import 'package:task_manager/models/user_model.dart';
+import 'package:get/get.dart';
+import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/utility/messages.dart';
-import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -25,37 +22,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _lastNameTEController = TextEditingController();
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
-  bool _inProgress = false;
-  Future<void> registration(context) async {
-    if (mounted) {
-      setState(() {
-        _inProgress = true;
-      });
-    }
+
+  Future<void> registration() async {
     if (_formKey.currentState!.validate()) {
-      UserModel formValue = UserModel(
+      bool response = await Get.find<AuthController>().userRegistration(
         email: _emailTEController.text.trim(),
         firstName: _firstNameTEController.text.trim(),
         lastName: _lastNameTEController.text.trim(),
         mobile: _mobileTEController.text.trim(),
         password: _passwordTEController.text,
-        photo: '',
       );
-
-      ApiResponse response = await ApiClient().apiPostRequest(
-          formValue: formValue.toJson(), url: Urls.registration);
-      if (response.isSuccess) {
+      if (response) {
         successToast(Messages.registrationSuccess);
         Get.offAllNamed(LoginScreen.routeName);
       } else {
         errorToast(Messages.registrationFailed);
       }
-    }
-
-    if (mounted) {
-      setState(() {
-        _inProgress = false;
-      });
     }
   }
 
@@ -173,18 +155,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         height: 20,
                       ),
                       SizedBox(
-                        child: Visibility(
-                          visible: _inProgress == false,
-                          replacement: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                          child: ElevatedButton(
-                            child: buttonChild(),
-                            onPressed: () {
-                              registration(context);
-                            },
-                          ),
-                        ),
+                        child: GetBuilder<AuthController>(builder: (auth) {
+                          return Visibility(
+                            visible: auth.inProgress == false,
+                            replacement: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            child: ElevatedButton(
+                              child: buttonChild(),
+                              onPressed: () {
+                                registration();
+                              },
+                            ),
+                          );
+                        }),
                       )
                     ],
                   ),

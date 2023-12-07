@@ -15,7 +15,10 @@ class AuthController extends GetxController {
 
   bool get inProgress => _inProgress;
 
-  Future<bool> userLogin(String email, String password) async {
+  Future<bool> userLogin(
+    String email,
+    String password,
+  ) async {
     _inProgress = true;
     update();
 
@@ -33,6 +36,95 @@ class AuthController extends GetxController {
         userToken: response.jsonResponse['token'],
         model: UserModel.fromJson(response.jsonResponse['data']),
       );
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> userRegistration(
+      {required String email,
+      required String firstName,
+      required String lastName,
+      required String mobile,
+      required String password}) async {
+    _inProgress = true;
+    update();
+
+    UserModel formValue = UserModel(
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      mobile: mobile,
+      password: password,
+      photo: '',
+    );
+
+    ApiResponse response = await ApiClient().apiPostRequest(
+      formValue: formValue.toJson(),
+      url: Urls.registration,
+    );
+    _inProgress = false;
+    update();
+    if (response.isSuccess) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> verifyUserEmail(String email) async {
+    _inProgress = true;
+    update();
+
+    ApiResponse res =
+        await ApiClient().apiGetRequest(url: Urls.recoverVerifyEmail(email));
+    _inProgress = false;
+    update();
+    if (res.isSuccess) {
+      saveUserToReset(model: UserModel.fromJson({'email': email}));
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> verifyPicCode(String pin) async {
+    _inProgress = true;
+    update();
+
+    String? email = user?.email ?? '';
+
+    ApiResponse res =
+        await ApiClient().apiGetRequest(url: Urls.recoverVerifyOTP(email, pin));
+    _inProgress = false;
+    update();
+    if (res.isSuccess) {
+      saveUserToReset(model: UserModel.fromJson({'email': email, 'OTP': pin}));
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> setPassword(String password) async {
+    _inProgress = true;
+    update();
+
+    String? email = user?.email ?? '';
+    String? otp = user?.otp ?? '';
+
+    UserModel formValue = UserModel(
+      email: email,
+      otp: otp,
+      password: password,
+    );
+
+    ApiResponse res = await ApiClient().apiPostRequest(
+        url: Urls.recoverResetPass, formValue: formValue.toJson());
+    _inProgress = false;
+    update();
+    if (res.isSuccess) {
       return true;
     } else {
       return false;

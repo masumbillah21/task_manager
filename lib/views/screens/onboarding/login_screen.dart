@@ -21,7 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  Future<void> login() async {
+
+  Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       bool response = await Get.find<AuthController>().userLogin(
         _emailTEController.text.trim(),
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: ElevatedButton(
                               child: buttonChild(),
                               onPressed: () {
-                                login();
+                                _login();
                               },
                             ),
                           );

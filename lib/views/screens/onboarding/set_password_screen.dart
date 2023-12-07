@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_manager/api/api_caller.dart';
-import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
-import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/messages.dart';
-import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
@@ -22,38 +18,17 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordTEController = TextEditingController();
   String _confirmPassword = '';
-  bool _inProgress = false;
 
-  Future<void> setPassword(context) async {
-    if (mounted) {
-      setState(() {
-        _inProgress = true;
-      });
-    }
+  Future<void> _setPassword() async {
     if (_formKey.currentState!.validate()) {
-      String? email = Get.find<AuthController>().user?.email ?? '';
-      String? otp = Get.find<AuthController>().user?.otp ?? '';
-
-      UserModel formValue = UserModel(
-        email: email,
-        otp: otp,
-        password: _passwordTEController.text,
-      );
-
-      ApiResponse res = await ApiClient().apiPostRequest(
-          url: Urls.recoverResetPass, formValue: formValue.toJson());
-      if (res.isSuccess) {
+      bool res = await Get.find<AuthController>()
+          .setPassword(_passwordTEController.text);
+      if (res) {
         successToast(Messages.passwordResetSuccess);
-        Navigator.pushNamedAndRemoveUntil(
-            context, LoginScreen.routeName, (route) => false);
+        Get.offNamedUntil(LoginScreen.routeName, (route) => false);
       } else {
         errorToast(Messages.passwordResetFailed);
       }
-    }
-    if (mounted) {
-      setState(() {
-        _inProgress = false;
-      });
     }
   }
 
@@ -125,18 +100,20 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   height: 20,
                 ),
                 SizedBox(
-                  child: Visibility(
-                    visible: _inProgress == false,
-                    replacement: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    child: ElevatedButton(
-                      child: buttonChild(buttonText: "Set Password"),
-                      onPressed: () {
-                        setPassword(context);
-                      },
-                    ),
-                  ),
+                  child: GetBuilder<AuthController>(builder: (auth) {
+                    return Visibility(
+                      visible: auth.inProgress == false,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      child: ElevatedButton(
+                        child: buttonChild(buttonText: "Set Password"),
+                        onPressed: () {
+                          _setPassword();
+                        },
+                      ),
+                    );
+                  }),
                 )
               ],
             ),
