@@ -3,12 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:task_manager/api/api_caller.dart';
-import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
-import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/messages.dart';
-import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/profile_image_picker.dart';
@@ -27,8 +23,8 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
   final ImagePicker picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   XFile? _imageFile;
-  bool _inProgress = false;
-  String _photoInBase64 = Get.find<AuthController>().user?.photo ?? '';
+
+  String _photoInBase64 = '';
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
@@ -110,35 +106,19 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
   }
 
   Future<void> _updateProfile() async {
-    if (mounted) {
-      setState(() {
-        _inProgress = true;
-      });
-    }
-
     if (_formKey.currentState!.validate()) {
-      UserModel formValue = UserModel(
-        email: _emailTEController.text.trim(),
-        firstName: _firstNameTEController.text.trim(),
-        lastName: _lastNameTEController.text.trim(),
-        mobile: _mobileTEController.text.trim(),
-        password: _passwordTEController.text,
-        photo: _photoInBase64,
-      );
-      ApiResponse res = await ApiClient().apiPostRequest(
-          url: Urls.profileUpdate, formValue: formValue.toJson());
-      if (res.isSuccess) {
-        Get.find<AuthController>().saveUserToReset(model: formValue);
+      bool res = await Get.find<AuthController>().updateProfile(
+          email: _emailTEController.text.trim(),
+          firstName: _firstNameTEController.text.trim(),
+          lastName: _lastNameTEController.text.trim(),
+          mobile: _mobileTEController.text.trim(),
+          password: _passwordTEController.text,
+          photo: _photoInBase64);
+      if (res) {
         successToast(Messages.profileUpdateSuccess);
       } else {
         errorToast(Messages.profileUpdateFailed);
       }
-    }
-
-    if (mounted) {
-      setState(() {
-        _inProgress = false;
-      });
     }
   }
 
@@ -149,6 +129,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
     _firstNameTEController.text = user?.firstName ?? '';
     _lastNameTEController.text = user?.lastName ?? '';
     _mobileTEController.text = user?.mobile ?? '';
+    _photoInBase64 = user?.photo ?? '';
     super.initState();
   }
 
@@ -283,17 +264,19 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                     height: 20,
                   ),
                   SizedBox(
-                    child: Visibility(
-                      visible: _inProgress == false,
-                      replacement:
-                          const Center(child: CircularProgressIndicator()),
-                      child: ElevatedButton(
-                        child: buttonChild(),
-                        onPressed: () {
-                          _updateProfile();
-                        },
-                      ),
-                    ),
+                    child: GetBuilder<AuthController>(builder: (auth) {
+                      return Visibility(
+                        visible: auth.inProgress == false,
+                        replacement:
+                            const Center(child: CircularProgressIndicator()),
+                        child: ElevatedButton(
+                          child: buttonChild(),
+                          onPressed: () {
+                            _updateProfile();
+                          },
+                        ),
+                      );
+                    }),
                   )
                 ],
               ),

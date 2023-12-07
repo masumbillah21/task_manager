@@ -131,6 +131,37 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<bool> updateProfile(
+      {required String email,
+      required String firstName,
+      required String lastName,
+      required String mobile,
+      String password = '',
+      String photo = ''}) async {
+    _inProgress = true;
+    update();
+
+    UserModel formValue = UserModel(
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      mobile: mobile,
+      password: password,
+      photo: photo,
+    );
+    ApiResponse res = await ApiClient()
+        .apiPostRequest(url: Urls.profileUpdate, formValue: formValue.toJson());
+
+    _inProgress = false;
+    update();
+    if (res.isSuccess) {
+      saveUserToReset(model: formValue);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<void> saveUserInfo(
       {required String userToken, required UserModel model}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
