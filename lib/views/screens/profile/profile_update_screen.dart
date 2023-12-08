@@ -19,7 +19,6 @@ class ProfileUpdateScreen extends StatefulWidget {
 
 class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? _photoInBase64 = Get.find<PhotoController>().photoInBase64;
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
@@ -88,7 +87,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
           lastName: _lastNameTEController.text.trim(),
           mobile: _mobileTEController.text.trim(),
           password: _passwordTEController.text,
-          photo: _photoInBase64 ?? '');
+          photo: Get.find<PhotoController>().photoInBase64 ?? '');
       if (res) {
         successToast(Messages.profileUpdateSuccess);
       } else {
@@ -104,7 +103,6 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
     _firstNameTEController.text = user?.firstName ?? '';
     _lastNameTEController.text = user?.lastName ?? '';
     _mobileTEController.text = user?.mobile ?? '';
-    _photoInBase64 = user?.photo ?? '';
     super.initState();
   }
 
@@ -142,28 +140,18 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                     height: 20,
                   ),
                   GetBuilder<PhotoController>(builder: (photo) {
-                    return GetBuilder<AuthController>(builder: (auth) {
-                      String? image = '';
-                      if (photo.photoInBase64?.isEmpty ?? true) {
-                        if (auth.user?.photo?.isNotEmpty ?? false) {
-                          image = auth.user!.photo;
-                        }
-                      } else {
-                        image = photo.photoInBase64;
-                      }
-                      return Container(
-                        alignment: Alignment.center,
-                        child: image?.isNotEmpty ?? false
-                            ? profileImage(imageProvider: image, radius: 60)
-                            : profileImage(radius: 60),
-                      );
-                    });
+                    return Container(
+                      alignment: Alignment.center,
+                      child: photo.photoInBase64?.isNotEmpty ?? false
+                          ? profileImage(
+                              imageProvider: photo.photoInBase64, radius: 60)
+                          : profileImage(radius: 60),
+                    );
                   }),
                   const SizedBox(
                     height: 20,
                   ),
                   GetBuilder<PhotoController>(builder: (photo) {
-                    _photoInBase64 = photo.photoInBase64;
                     return ProfileImagePicker(
                       onTab: _showPhotoDialogBox,
                       photoLink: photo.imageFile,
