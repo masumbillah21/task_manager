@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/controllers/photo_controller.dart';
 import 'package:task_manager/controllers/task_controller.dart';
 import 'package:task_manager/controllers/task_count_controller.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
@@ -116,5 +117,6 @@ class TaskManagerDependency extends Bindings {
     Get.put(AuthController());
     Get.put(TaskController());
     Get.put(TaskCountController());
+    Get.put(PhotoController());
   }
 }

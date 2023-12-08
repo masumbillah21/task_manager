@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/controllers/photo_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -20,11 +18,8 @@ class ProfileUpdateScreen extends StatefulWidget {
 }
 
 class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
-  final ImagePicker picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
-  XFile? _imageFile;
-
-  String _photoInBase64 = '';
+  String? _photoInBase64 = Get.find<PhotoController>().photoInBase64;
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
@@ -32,31 +27,11 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
 
   Future<void> _takePhoto({bool isGallery = false}) async {
-    final XFile? photo;
-    if (isGallery) {
-      photo = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxHeight: 400,
-        maxWidth: 400,
-      );
-    } else {
-      photo = await picker.pickImage(
-        source: ImageSource.camera,
-        maxHeight: 400,
-        maxWidth: 400,
-      );
-    }
+    bool res =
+        await Get.find<PhotoController>().takePhoto(isGallery: isGallery);
 
-    if (photo != null) {
-      List<int> imageBytes = await photo.readAsBytes();
-
-      if (mounted) {
-        Navigator.pop(context);
-        setState(() {
-          _photoInBase64 = base64Encode(imageBytes);
-          _imageFile = photo;
-        });
-      }
+    if (res) {
+      Get.back();
     }
   }
 
@@ -113,7 +88,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
           lastName: _lastNameTEController.text.trim(),
           mobile: _mobileTEController.text.trim(),
           password: _passwordTEController.text,
-          photo: _photoInBase64);
+          photo: _photoInBase64 ?? '');
       if (res) {
         successToast(Messages.profileUpdateSuccess);
       } else {
@@ -166,20 +141,34 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    child: _photoInBase64.isNotEmpty
-                        ? profileImage(
-                            imageProvider: _photoInBase64, radius: 60)
-                        : profileImage(radius: 60),
-                  ),
+                  GetBuilder<PhotoController>(builder: (photo) {
+                    return GetBuilder<AuthController>(builder: (auth) {
+                      String? image = '';
+                      if (photo.photoInBase64?.isEmpty ?? true) {
+                        if (auth.user?.photo?.isNotEmpty ?? false) {
+                          image = auth.user!.photo;
+                        }
+                      } else {
+                        image = photo.photoInBase64;
+                      }
+                      return Container(
+                        alignment: Alignment.center,
+                        child: image?.isNotEmpty ?? false
+                            ? profileImage(imageProvider: image, radius: 60)
+                            : profileImage(radius: 60),
+                      );
+                    });
+                  }),
                   const SizedBox(
                     height: 20,
                   ),
-                  ProfileImagePicker(
-                    onTab: _showPhotoDialogBox,
-                    photoLink: _imageFile,
-                  ),
+                  GetBuilder<PhotoController>(builder: (photo) {
+                    _photoInBase64 = photo.photoInBase64;
+                    return ProfileImagePicker(
+                      onTab: _showPhotoDialogBox,
+                      photoLink: photo.imageFile,
+                    );
+                  }),
                   const SizedBox(
                     height: 20,
                   ),
