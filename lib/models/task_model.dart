@@ -24,7 +24,6 @@ class TaskModel {
     task['title'] = title;
     task['description'] = description;
     task['status'] = status;
-    task['createdDate'] = createdDate;
     return jsonEncode(task);
   }
 }

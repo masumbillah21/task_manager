@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:task_manager/api/api_caller.dart';
-import 'package:task_manager/api/api_response.dart';
+import 'package:get/get.dart';
+import 'package:task_manager/controllers/task_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/status_enum.dart';
-import 'package:task_manager/utility/urls.dart';
 import 'package:task_manager/views/style/style.dart';
 import 'package:task_manager/views/widgets/task_app_bar.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
@@ -23,36 +20,20 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _subjectTEController = TextEditingController();
   final TextEditingController _desTEController = TextEditingController();
-  bool _inProgress = false;
-  bool _taskAdded = false;
 
-  Future<void> _createNewTask(context) async {
+  Future<void> _createNewTask() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _inProgress = true;
-      });
-      Map<String, String> formData = {
-        'title': _subjectTEController.text.trim(),
-        'description': _desTEController.text.trim(),
-        'status': StatusEnum.New.name,
-      };
-      ApiResponse res = await ApiClient().apiPostRequest(
-          url: Urls.createTask, formValue: jsonEncode(formData));
-      if (res.isSuccess) {
+      bool res = await Get.find<TaskController>().createNewTask(
+        title: _subjectTEController.text.trim(),
+        description: _desTEController.text.trim(),
+      );
+      if (res) {
         successToast(Messages.createTaskSuccess);
         _subjectTEController.clear();
         _desTEController.clear();
-        _taskAdded = true;
-        if (mounted) {
-          setState(() {});
-        }
+        Get.find<TaskController>().getTakList(StatusEnum.New);
       } else {
         errorToast(Messages.createTaskFailed);
-      }
-      if (mounted) {
-        setState(() {
-          _inProgress = false;
-        });
       }
     }
   }
@@ -72,7 +53,7 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
         if (onPop) {
           return;
         }
-        Navigator.pop(context, _taskAdded);
+        Navigator.pop(context);
       },
       child: Scaffold(
         appBar: const TaskAppBar(),
@@ -126,18 +107,20 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
                       height: 20,
                     ),
                     SizedBox(
-                      child: Visibility(
-                        visible: _inProgress == false,
-                        replacement: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                        child: ElevatedButton(
-                          child: buttonChild(),
-                          onPressed: () {
-                            _createNewTask(context);
-                          },
-                        ),
-                      ),
+                      child: GetBuilder<TaskController>(builder: (task) {
+                        return Visibility(
+                          visible: task.inProgress == false,
+                          replacement: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          child: ElevatedButton(
+                            child: buttonChild(),
+                            onPressed: () {
+                              _createNewTask();
+                            },
+                          ),
+                        );
+                      }),
                     ),
                   ],
                 ),

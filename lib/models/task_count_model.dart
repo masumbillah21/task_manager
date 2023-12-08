@@ -8,11 +8,4 @@ class TaskCountModel {
     id = json['_id'];
     sum = json['sum'];
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['_id'] = id;
-    data['sum'] = sum;
-    return data;
-  }
 }

@@ -1,28 +1,109 @@
 import 'package:get/get.dart';
+import 'package:task_manager/api/api_caller.dart';
+import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/models/task_model.dart';
+import 'package:task_manager/utility/status_enum.dart';
+import 'package:task_manager/utility/urls.dart';
 
 class TaskController extends GetxController {
-  String? status;
-  List<TaskModel>? taskList;
+  List<TaskModel>? _newTaskList = [];
+  List<TaskModel>? _progressTaskList = [];
+  List<TaskModel>? _completeTaskList = [];
+  List<TaskModel>? _cancelTaskList = [];
 
-  TaskController({this.status, this.taskList});
+  bool _inProgress = false;
 
-  TaskController.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    if (json['data'] != null) {
-      taskList = <TaskModel>[];
-      json['data'].forEach((v) {
-        taskList!.add(TaskModel.fromJson(v));
-      });
+  bool get inProgress => _inProgress;
+
+  List<TaskModel>? get newTaskList => _newTaskList;
+  List<TaskModel>? get progressTaskList => _progressTaskList;
+  List<TaskModel>? get completeTaskList => _completeTaskList;
+  List<TaskModel>? get cancelTaskList => _cancelTaskList;
+
+  Future<bool> createNewTask(
+      {required String title, required String description}) async {
+    _inProgress = true;
+    update();
+
+    TaskModel formData = TaskModel(
+      title: title,
+      description: description,
+      status: StatusEnum.New.name,
+    );
+    ApiResponse res = await ApiClient().apiPostRequest(
+      url: Urls.createTask,
+      formValue: formData.toJson(),
+    );
+    _inProgress = false;
+    update();
+    if (res.isSuccess) {
+      return true;
+    } else {
+      return false;
     }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    if (taskList != null) {
-      data['data'] = taskList!.map((v) => v.toJson()).toList();
+  Future<bool> getTakList(StatusEnum status) async {
+    _inProgress = true;
+    update();
+
+    ApiResponse res = await ApiClient()
+        .apiGetRequest(url: "${Urls.listTaskByStatus}/${status.name}");
+    _inProgress = false;
+    update();
+    if (res.isSuccess) {
+      if (res.jsonResponse['data'] != null) {
+        List<TaskModel>? taskList = <TaskModel>[];
+
+        res.jsonResponse['data'].forEach((v) {
+          taskList.add(TaskModel.fromJson(v));
+        });
+
+        if (status == StatusEnum.New) {
+          _newTaskList = taskList;
+        } else if (status == StatusEnum.Progress) {
+          _progressTaskList = taskList;
+        } else if (status == StatusEnum.Completed) {
+          _completeTaskList = taskList;
+        } else if (status == StatusEnum.Canceled) {
+          _cancelTaskList = taskList;
+        }
+      }
+      update();
+      return true;
     }
-    return data;
+
+    return false;
+  }
+
+  Future<bool> updateTaskStatus(
+      {required String taskId, required String status}) async {
+    _inProgress = true;
+    update();
+
+    ApiResponse res = await ApiClient()
+        .apiGetRequest(url: Urls.updateTaskStatus(taskId, status));
+    _inProgress = false;
+    update();
+    if (res.isSuccess) {
+      return true;
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> deleteTask(String taskId) async {
+    _inProgress = true;
+    update();
+
+    ApiResponse res =
+        await ApiClient().apiGetRequest(url: Urls.deleteTask(taskId));
+    _inProgress = false;
+    update();
+    if (res.isSuccess) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
