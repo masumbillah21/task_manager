@@ -1,19 +1,74 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:task_manager/api/api_caller.dart';
 import 'package:task_manager/api/api_response.dart';
 import 'package:task_manager/models/user_model.dart';
 import 'package:task_manager/utility/urls.dart';
 
 class AuthController extends GetxController {
-  static String? token;
-  UserModel? user;
+  static String? _token;
+  static UserModel? _user;
+  static final _storage = GetStorage();
 
   bool _inProgress = false;
 
   bool get inProgress => _inProgress;
+  static String? get token => _token;
+  UserModel? get user => _user;
+
+  Future<void> saveUserInfo(
+      {required String userToken, required UserModel model}) async {
+    //final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _filterProfilePhoto(model);
+    await _storage.write('token', userToken);
+    await _storage.write("user", model.toJson());
+    _token = userToken;
+    _user = UserModel.fromJson(jsonDecode(_storage.read('user') ?? '{}'));
+    update();
+  }
+
+  Future<void> saveUserToReset({required UserModel model}) async {
+    //final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _filterProfilePhoto(model);
+    await _storage.write("user", model.toJson());
+    _user = UserModel.fromJson(jsonDecode(_storage.read('user') ?? '{}'));
+    update();
+  }
+
+  Future<void> initializeUserCache() async {
+    //final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _token = _storage.read('token');
+    _user = UserModel.fromJson(jsonDecode(_storage.read('user') ?? '{}'));
+  }
+
+  Future<bool> checkAuthState() async {
+    //final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = _storage.read('token');
+    if (token != null) {
+      await initializeUserCache();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static Future<void> clearAuthData() async {
+    //final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //final storage = GetStorage();
+    await _storage.erase();
+    _token = null;
+    _user = null;
+  }
+
+  static UserModel _filterProfilePhoto(UserModel model) {
+    if (model.photo != null && model.photo!.startsWith('data:image')) {
+      model.photo =
+          model.photo!.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), '');
+    }
+    return model;
+  }
 
   Future<bool> userLogin(
     String email,
@@ -160,55 +215,5 @@ class AuthController extends GetxController {
     } else {
       return false;
     }
-  }
-
-  Future<void> saveUserInfo(
-      {required String userToken, required UserModel model}) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    _filterProfilePhoto(model);
-    await prefs.setString('token', userToken);
-    await prefs.setString("user", model.toJson());
-    token = userToken;
-    user = UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
-    update();
-  }
-
-  Future<void> saveUserToReset({required UserModel model}) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    _filterProfilePhoto(model);
-    await prefs.setString("user", model.toJson());
-    user = UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
-    update();
-  }
-
-  Future<void> initializeUserCache() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token');
-    user = UserModel.fromJson(jsonDecode(prefs.getString('user') ?? '{}'));
-  }
-
-  Future<bool> checkAuthState() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    if (token != null) {
-      await initializeUserCache();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  static Future<void> clearAuthData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    token = null;
-  }
-
-  static UserModel _filterProfilePhoto(UserModel model) {
-    if (model.photo != null && model.photo!.startsWith('data:image')) {
-      model.photo =
-          model.photo!.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), '');
-    }
-    return model;
   }
 }

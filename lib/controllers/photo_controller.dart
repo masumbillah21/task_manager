@@ -2,11 +2,10 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:task_manager/controllers/auth_controller.dart';
 
 class PhotoController extends GetxController {
   final ImagePicker picker = ImagePicker();
-  String? _photoInBase64 = Get.find<AuthController>().user?.photo ?? '';
+  String? _photoInBase64;
   XFile? _imageFile;
 
   String? get photoInBase64 => _photoInBase64;
