@@ -6,28 +6,20 @@ import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 import 'package:task_manager/views/widgets/task_list_card.dart';
 
-class CancelledTaskListScreen extends StatefulWidget {
+class CancelledTaskListScreen extends StatelessWidget {
   static const routeName = "/cancel-task";
   const CancelledTaskListScreen({super.key});
 
-  @override
-  State<CancelledTaskListScreen> createState() =>
-      _CancelledTaskListScreenState();
-}
-
-class _CancelledTaskListScreenState extends State<CancelledTaskListScreen> {
   Future<void> _getTakList() async {
-    await Get.find<TaskController>().getTakList(StatusEnum.Canceled);
-  }
-
-  @override
-  void initState() {
-    _getTakList();
-    super.initState();
+    await Get.find<TaskController>().getTakList(StatusEnum.Canceled.name);
   }
 
   @override
   Widget build(BuildContext context) {
+    var taskController = Get.find<TaskController>();
+    if (taskController.cancelTaskList == null) {
+      _getTakList();
+    }
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {

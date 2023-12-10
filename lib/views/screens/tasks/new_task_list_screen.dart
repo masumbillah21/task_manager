@@ -10,32 +10,26 @@ import 'package:task_manager/views/widgets/counter_container.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 import 'package:task_manager/views/widgets/task_list_card.dart';
 
-class NewTaskListScreen extends StatefulWidget {
+class NewTaskListScreen extends StatelessWidget {
   static const routeName = "/new-task";
   const NewTaskListScreen({super.key});
 
-  @override
-  State<NewTaskListScreen> createState() => _NewTaskListScreenState();
-}
-
-class _NewTaskListScreenState extends State<NewTaskListScreen> {
   Future<void> _getTakStatusCount() async {
     await Get.find<TaskCountController>().getTakStatusCount();
   }
 
   Future<void> _getTakList() async {
-    await Get.find<TaskController>().getTakList(StatusEnum.New);
-  }
-
-  @override
-  void initState() {
-    _getTakStatusCount();
-    _getTakList();
-    super.initState();
+    await Get.find<TaskController>().getTakList(StatusEnum.New.name);
   }
 
   @override
   Widget build(BuildContext context) {
+    var taskController = Get.find<TaskController>();
+    if (taskController.newTaskList == null) {
+      _getTakStatusCount();
+      _getTakList();
+    }
+
     return SafeArea(
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
@@ -46,17 +40,14 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
             borderRadius: BorderRadius.circular(50),
           ),
           onPressed: () async {
-            final res = await Get.toNamed(TaskCreateScreen.routeName);
-            if (res == true) {
-              _getTakStatusCount();
-              _getTakList();
-            }
+            Get.toNamed(TaskCreateScreen.routeName);
           },
           child: const Icon(Icons.add),
         ),
         body: RefreshIndicator(
           onRefresh: () async {
             await _getTakList();
+            await _getTakStatusCount();
           },
           child: TaskBackgroundContainer(
             child: Padding(
@@ -113,7 +104,6 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
                                   itemBuilder: (context, index) => TaskListCard(
                                     taskList: task.newTaskList![index],
                                     getStatusUpdate: () {
-                                      _getTakStatusCount();
                                       _getTakList();
                                     },
                                   ),

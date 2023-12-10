@@ -103,6 +103,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
     _firstNameTEController.text = user?.firstName ?? '';
     _lastNameTEController.text = user?.lastName ?? '';
     _mobileTEController.text = user?.mobile ?? '';
+    Get.find<PhotoController>().photoInBase64 = user?.photo ?? '';
     super.initState();
   }
 

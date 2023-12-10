@@ -6,27 +6,20 @@ import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 import 'package:task_manager/views/widgets/task_list_card.dart';
 
-class ProgressTaskListScreen extends StatefulWidget {
+class ProgressTaskListScreen extends StatelessWidget {
   static const routeName = "/progress-task";
   const ProgressTaskListScreen({super.key});
 
-  @override
-  State<ProgressTaskListScreen> createState() => _ProgressTaskListScreenState();
-}
-
-class _ProgressTaskListScreenState extends State<ProgressTaskListScreen> {
   Future<void> _getTakList() async {
-    await Get.find<TaskController>().getTakList(StatusEnum.Progress);
-  }
-
-  @override
-  void initState() {
-    _getTakList();
-    super.initState();
+    await Get.find<TaskController>().getTakList(StatusEnum.Progress.name);
   }
 
   @override
   Widget build(BuildContext context) {
+    var taskController = Get.find<TaskController>();
+    if (taskController.progressTaskList == null) {
+      _getTakList();
+    }
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {

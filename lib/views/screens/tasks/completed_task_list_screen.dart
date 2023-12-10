@@ -6,28 +6,20 @@ import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/views/widgets/task_background_container.dart';
 import 'package:task_manager/views/widgets/task_list_card.dart';
 
-class CompletedTaskListScreen extends StatefulWidget {
+class CompletedTaskListScreen extends StatelessWidget {
   static const routeName = "/completed-task";
   const CompletedTaskListScreen({super.key});
 
-  @override
-  State<CompletedTaskListScreen> createState() =>
-      _CompletedTaskListScreenState();
-}
-
-class _CompletedTaskListScreenState extends State<CompletedTaskListScreen> {
   Future<void> _getTakList() async {
-    await Get.find<TaskController>().getTakList(StatusEnum.Completed);
-  }
-
-  @override
-  void initState() {
-    _getTakList();
-    super.initState();
+    await Get.find<TaskController>().getTakList(StatusEnum.Completed.name);
   }
 
   @override
   Widget build(BuildContext context) {
+    var taskController = Get.find<TaskController>();
+    if (taskController.completeTaskList == null) {
+      _getTakList();
+    }
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {

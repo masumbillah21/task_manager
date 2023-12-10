@@ -5,10 +5,8 @@ import 'package:image_picker/image_picker.dart';
 
 class PhotoController extends GetxController {
   final ImagePicker picker = ImagePicker();
-  String? _photoInBase64;
+  String? photoInBase64;
   XFile? _imageFile;
-
-  String? get photoInBase64 => _photoInBase64;
   XFile? get imageFile => _imageFile;
 
   Future<bool> takePhoto({bool isGallery = false}) async {
@@ -29,7 +27,7 @@ class PhotoController extends GetxController {
 
     if (photo != null) {
       List<int> imageBytes = await photo.readAsBytes();
-      _photoInBase64 = base64Encode(imageBytes);
+      photoInBase64 = base64Encode(imageBytes);
       _imageFile = photo;
       update();
       return true;

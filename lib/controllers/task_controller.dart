@@ -6,10 +6,10 @@ import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/utility/urls.dart';
 
 class TaskController extends GetxController {
-  List<TaskModel>? _newTaskList = [];
-  List<TaskModel>? _progressTaskList = [];
-  List<TaskModel>? _completeTaskList = [];
-  List<TaskModel>? _cancelTaskList = [];
+  List<TaskModel>? _newTaskList;
+  List<TaskModel>? _progressTaskList;
+  List<TaskModel>? _completeTaskList;
+  List<TaskModel>? _cancelTaskList;
 
   bool _inProgress = false;
 
@@ -43,12 +43,12 @@ class TaskController extends GetxController {
     }
   }
 
-  Future<bool> getTakList(StatusEnum status) async {
+  Future<bool> getTakList(String status) async {
     _inProgress = true;
     update();
 
     ApiResponse res = await ApiClient()
-        .apiGetRequest(url: "${Urls.listTaskByStatus}/${status.name}");
+        .apiGetRequest(url: "${Urls.listTaskByStatus}/$status");
     _inProgress = false;
     update();
     if (res.isSuccess) {
@@ -59,13 +59,13 @@ class TaskController extends GetxController {
           taskList.add(TaskModel.fromJson(v));
         });
 
-        if (status == StatusEnum.New) {
+        if (status == StatusEnum.New.name) {
           _newTaskList = taskList;
-        } else if (status == StatusEnum.Progress) {
+        } else if (status == StatusEnum.Progress.name) {
           _progressTaskList = taskList;
-        } else if (status == StatusEnum.Completed) {
+        } else if (status == StatusEnum.Completed.name) {
           _completeTaskList = taskList;
-        } else if (status == StatusEnum.Canceled) {
+        } else if (status == StatusEnum.Canceled.name) {
           _cancelTaskList = taskList;
         }
       }
