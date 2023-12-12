@@ -17,7 +17,7 @@ class CompletedTaskListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var taskController = Get.find<TaskController>();
-    if (taskController.completeTaskList == null) {
+    if (!taskController.isCompleteTaskCalled) {
       _getTakList();
     }
     return Scaffold(

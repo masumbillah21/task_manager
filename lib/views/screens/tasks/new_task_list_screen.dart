@@ -25,7 +25,7 @@ class NewTaskListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var taskController = Get.find<TaskController>();
-    if (taskController.newTaskList == null) {
+    if (!taskController.isNewTaskCalled) {
       _getTakStatusCount();
       _getTakList();
     }

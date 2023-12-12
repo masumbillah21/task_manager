@@ -17,7 +17,7 @@ class CancelledTaskListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var taskController = Get.find<TaskController>();
-    if (taskController.cancelTaskList == null) {
+    if (!taskController.isCancelTaskCalled) {
       _getTakList();
     }
     return Scaffold(

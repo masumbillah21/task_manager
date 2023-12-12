@@ -6,10 +6,15 @@ import 'package:task_manager/utility/status_enum.dart';
 import 'package:task_manager/utility/urls.dart';
 
 class TaskController extends GetxController {
-  List<TaskModel>? _newTaskList;
-  List<TaskModel>? _progressTaskList;
-  List<TaskModel>? _completeTaskList;
-  List<TaskModel>? _cancelTaskList;
+  List<TaskModel>? _newTaskList = [];
+  List<TaskModel>? _progressTaskList = [];
+  List<TaskModel>? _completeTaskList = [];
+  List<TaskModel>? _cancelTaskList = [];
+
+  bool _isNewTaskCalled = false;
+  bool _isProgressTaskCalled = false;
+  bool _isCompleteTaskCalled = false;
+  bool _isCancelTaskCalled = false;
 
   bool _inProgress = false;
 
@@ -19,6 +24,11 @@ class TaskController extends GetxController {
   List<TaskModel>? get progressTaskList => _progressTaskList;
   List<TaskModel>? get completeTaskList => _completeTaskList;
   List<TaskModel>? get cancelTaskList => _cancelTaskList;
+
+  bool get isNewTaskCalled => _isNewTaskCalled;
+  bool get isProgressTaskCalled => _isProgressTaskCalled;
+  bool get isCompleteTaskCalled => _isCompleteTaskCalled;
+  bool get isCancelTaskCalled => _isCancelTaskCalled;
 
   Future<bool> createNewTask(
       {required String title, required String description}) async {
@@ -45,6 +55,7 @@ class TaskController extends GetxController {
 
   Future<bool> getTakList(String status) async {
     _inProgress = true;
+    print("Get task called $status");
     update();
 
     ApiResponse res = await ApiClient()
@@ -61,12 +72,24 @@ class TaskController extends GetxController {
 
         if (status == StatusEnum.New.name) {
           _newTaskList = taskList;
+          if (!_isNewTaskCalled) {
+            _isNewTaskCalled = true;
+          }
         } else if (status == StatusEnum.Progress.name) {
           _progressTaskList = taskList;
+          if (!_isProgressTaskCalled) {
+            _isProgressTaskCalled = true;
+          }
         } else if (status == StatusEnum.Completed.name) {
           _completeTaskList = taskList;
+          if (!_isCompleteTaskCalled) {
+            _isCompleteTaskCalled = true;
+          }
         } else if (status == StatusEnum.Canceled.name) {
           _cancelTaskList = taskList;
+          if (!_isCancelTaskCalled) {
+            _isCancelTaskCalled = true;
+          }
         }
       }
       update();
@@ -79,6 +102,7 @@ class TaskController extends GetxController {
   Future<bool> updateTaskStatus(
       {required String taskId, required String status}) async {
     _inProgress = true;
+    print('Update called');
     update();
 
     ApiResponse res = await ApiClient()

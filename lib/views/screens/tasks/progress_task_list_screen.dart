@@ -17,7 +17,7 @@ class ProgressTaskListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var taskController = Get.find<TaskController>();
-    if (taskController.progressTaskList == null) {
+    if (!taskController.isProgressTaskCalled) {
       _getTakList();
     }
     return Scaffold(
