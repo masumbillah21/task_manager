@@ -12,6 +12,7 @@ A Simple Task Manager Flutter project.
 - Profile update (Using Token Verification)
   - Add profile photo
   - Update email, first name, last name, mobile, password
+- Logout
 
 ## Additional Functions
 - Api Integration
