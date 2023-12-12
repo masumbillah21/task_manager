@@ -55,7 +55,6 @@ class TaskController extends GetxController {
 
   Future<bool> getTakList(String status) async {
     _inProgress = true;
-    print("Get task called $status");
     update();
 
     ApiResponse res = await ApiClient()
@@ -102,7 +101,6 @@ class TaskController extends GetxController {
   Future<bool> updateTaskStatus(
       {required String taskId, required String status}) async {
     _inProgress = true;
-    print('Update called');
     update();
 
     ApiResponse res = await ApiClient()

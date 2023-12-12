@@ -80,6 +80,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         animationType: AnimationType.fade,
                         animationDuration: const Duration(microseconds: 300),
                         enableActiveFill: true,
+                        onSubmitted: (_) {
+                          _verifyPicCode();
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredOTP;
