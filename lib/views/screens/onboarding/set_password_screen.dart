@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/controllers/user_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -18,10 +18,12 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordTEController = TextEditingController();
   String _confirmPassword = '';
+  final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _confirmPasswordFocusNode = FocusNode();
 
   Future<void> _setPassword() async {
     if (_formKey.currentState!.validate()) {
-      bool res = await Get.find<AuthController>()
+      bool res = await Get.find<UserController>()
           .setPassword(_passwordTEController.text);
       if (res) {
         successToast(Messages.passwordResetSuccess);
@@ -34,7 +36,9 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
 
   @override
   void dispose() {
-    _passwordTEController.clear();
+    _passwordTEController.dispose();
+    _passwordFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
     super.dispose();
   }
 
@@ -66,8 +70,13 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 ),
                 TextFormField(
                   controller: _passwordTEController,
+                  focusNode: _passwordFocusNode,
                   decoration: const InputDecoration(label: Text("Password")),
                   obscureText: true,
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context)
+                        .requestFocus(_confirmPasswordFocusNode);
+                  },
                   validator: (value) {
                     if (value!.isEmpty) {
                       return Messages.requiredPassword;
@@ -84,9 +93,13 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   height: 20,
                 ),
                 TextFormField(
+                  focusNode: _confirmPasswordFocusNode,
                   decoration:
                       const InputDecoration(label: Text("Confirm Password")),
                   obscureText: true,
+                  onFieldSubmitted: (_) {
+                    _setPassword();
+                  },
                   validator: (value) {
                     if (value!.isEmpty) {
                       return Messages.requiredConfirmPassword;
@@ -100,7 +113,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   height: 20,
                 ),
                 SizedBox(
-                  child: GetBuilder<AuthController>(builder: (auth) {
+                  child: GetBuilder<UserController>(builder: (auth) {
                     return Visibility(
                       visible: auth.inProgress == false,
                       replacement: const Center(

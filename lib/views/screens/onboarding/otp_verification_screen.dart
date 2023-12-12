@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/controllers/user_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/views/screens/onboarding/set_password_screen.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -22,7 +22,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   Future<void> _verifyPicCode() async {
     if (_formKey.currentState!.validate()) {
-      bool res = await Get.find<AuthController>()
+      bool res = await Get.find<UserController>()
           .verifyPicCode(_pinCodeCTEController.text.trim());
       if (res) {
         successToast(Messages.otpSuccess);
@@ -35,7 +35,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   @override
   void dispose() {
-    _pinCodeCTEController.clear();
+    _pinCodeCTEController.dispose();
     super.dispose();
   }
 
@@ -93,7 +93,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         height: 20,
                       ),
                       SizedBox(
-                        child: GetBuilder<AuthController>(builder: (auth) {
+                        child: GetBuilder<UserController>(builder: (auth) {
                           return Visibility(
                             visible: auth.inProgress == false,
                             replacement: const Center(

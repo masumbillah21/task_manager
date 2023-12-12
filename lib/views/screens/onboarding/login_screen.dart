@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/controllers/user_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
@@ -18,13 +18,15 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      bool response = await Get.find<AuthController>().userLogin(
+      bool response = await Get.find<UserController>().userLogin(
         _emailTEController.text.trim(),
         _passwordTEController.text,
       );
@@ -40,8 +42,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _emailTEController.clear();
-    _passwordTEController.clear();
+    _emailTEController.dispose();
+    _passwordTEController.dispose();
+
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -78,9 +83,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextFormField(
                         controller: _emailTEController,
+                        focusNode: _emailFocusNode,
                         decoration:
                             const InputDecoration(label: Text("Email Address")),
                         keyboardType: TextInputType.emailAddress,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context)
+                              .requestFocus(_passwordFocusNode);
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredEmail;
@@ -95,9 +105,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextFormField(
                         controller: _passwordTEController,
+                        focusNode: _passwordFocusNode,
                         decoration:
                             const InputDecoration(label: Text("Password")),
                         obscureText: true,
+                        onFieldSubmitted: (_) {
+                          _login();
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredPassword;
@@ -111,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 20,
                       ),
                       SizedBox(
-                        child: GetBuilder<AuthController>(
+                        child: GetBuilder<UserController>(
                             builder: (authController) {
                           return Visibility(
                             visible: !authController.inProgress,

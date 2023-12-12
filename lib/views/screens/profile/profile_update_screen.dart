@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/controllers/photo_controller.dart';
+import 'package:task_manager/controllers/user_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/style/style.dart';
@@ -24,6 +25,12 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
   final TextEditingController _lastNameTEController = TextEditingController();
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
+
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _firstNameFocusNode = FocusNode();
+  final FocusNode _lastNameFocusNode = FocusNode();
+  final FocusNode _mobileFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
 
   Future<void> _takePhoto({bool isGallery = false}) async {
     bool res =
@@ -81,7 +88,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
 
   Future<void> _updateProfile() async {
     if (_formKey.currentState!.validate()) {
-      bool res = await Get.find<AuthController>().updateProfile(
+      bool res = await Get.find<UserController>().updateProfile(
           email: _emailTEController.text.trim(),
           firstName: _firstNameTEController.text.trim(),
           lastName: _lastNameTEController.text.trim(),
@@ -109,11 +116,17 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
 
   @override
   void dispose() {
-    _emailTEController.clear();
-    _firstNameTEController.clear();
-    _lastNameTEController.clear();
-    _mobileTEController.clear();
-    _passwordTEController.clear();
+    _emailTEController.dispose();
+    _firstNameTEController.dispose();
+    _lastNameTEController.dispose();
+    _mobileTEController.dispose();
+    _passwordTEController.dispose();
+
+    _emailFocusNode.dispose();
+    _firstNameFocusNode.dispose();
+    _lastNameFocusNode.dispose();
+    _mobileFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -163,8 +176,12 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _emailTEController,
+                    focusNode: _emailFocusNode,
                     decoration:
                         const InputDecoration(label: Text("Email Address")),
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_firstNameFocusNode);
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return Messages.requiredEmail;
@@ -179,8 +196,12 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _firstNameTEController,
+                    focusNode: _firstNameFocusNode,
                     decoration:
                         const InputDecoration(label: Text("First Name")),
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_lastNameFocusNode);
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return Messages.requiredFirstName;
@@ -193,7 +214,11 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _lastNameTEController,
+                    focusNode: _lastNameFocusNode,
                     decoration: const InputDecoration(label: Text("Last Name")),
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_mobileFocusNode);
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return Messages.requiredLastName;
@@ -206,9 +231,13 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _mobileTEController,
+                    focusNode: _mobileFocusNode,
                     decoration:
                         const InputDecoration(label: Text("Mobile Number")),
                     keyboardType: TextInputType.number,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_passwordFocusNode);
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return Messages.requiredMobileNumber;
@@ -225,9 +254,13 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                   ),
                   TextFormField(
                     controller: _passwordTEController,
+                    focusNode: _passwordFocusNode,
                     decoration: const InputDecoration(
                       label: Text("Password (Optional)"),
                     ),
+                    onFieldSubmitted: (_) {
+                      _updateProfile();
+                    },
                     obscureText: true,
                     validator: (value) {
                       if (value!.isNotEmpty) {
@@ -242,7 +275,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                     height: 20,
                   ),
                   SizedBox(
-                    child: GetBuilder<AuthController>(builder: (auth) {
+                    child: GetBuilder<UserController>(builder: (auth) {
                       return Visibility(
                         visible: auth.inProgress == false,
                         replacement:

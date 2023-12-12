@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/controllers/user_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
@@ -24,7 +24,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   Future<void> _verifyEmail() async {
     if (_formKey.currentState!.validate()) {
-      bool res = await Get.find<AuthController>()
+      bool res = await Get.find<UserController>()
           .verifyUserEmail(_emailTEController.text.trim());
       if (res) {
         successToast(Messages.emailVerificationSuccess);
@@ -37,7 +37,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   void dispose() {
-    _emailTEController.clear();
+    _emailTEController.dispose();
     super.dispose();
   }
 
@@ -76,6 +76,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         decoration:
                             const InputDecoration(label: Text("Email Address")),
                         keyboardType: TextInputType.emailAddress,
+                        onFieldSubmitted: (_) {
+                          _verifyEmail();
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredEmail;
@@ -89,7 +92,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         height: 20,
                       ),
                       SizedBox(
-                        child: GetBuilder<AuthController>(builder: (auth) {
+                        child: GetBuilder<UserController>(builder: (auth) {
                           return Visibility(
                             visible: auth.inProgress == false,
                             replacement: const Center(

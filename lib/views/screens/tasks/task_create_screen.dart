@@ -22,6 +22,9 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
   final TextEditingController _subjectTEController = TextEditingController();
   final TextEditingController _desTEController = TextEditingController();
 
+  final _subjectFocus = FocusNode();
+  final _descriptionFocus = FocusNode();
+
   Future<void> _createNewTask() async {
     if (_formKey.currentState!.validate()) {
       bool res = await Get.find<TaskController>().createNewTask(
@@ -44,6 +47,8 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
   void dispose() {
     _subjectTEController.dispose();
     _desTEController.dispose();
+    _subjectFocus.dispose();
+    _descriptionFocus.dispose();
     super.dispose();
   }
 
@@ -70,8 +75,13 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
                   ),
                   TextFormField(
                     controller: _subjectTEController,
+                    focusNode: _subjectFocus,
                     decoration: const InputDecoration(label: Text("Subject")),
                     keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_descriptionFocus);
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Subject is required';
@@ -85,10 +95,14 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
                   TextFormField(
                     textAlign: TextAlign.start,
                     controller: _desTEController,
+                    focusNode: _descriptionFocus,
                     maxLines: 10,
                     decoration:
                         const InputDecoration(label: Text("Description")),
                     keyboardType: TextInputType.emailAddress,
+                    onFieldSubmitted: (_) {
+                      _createNewTask();
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Description is required';

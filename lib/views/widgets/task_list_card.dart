@@ -27,8 +27,8 @@ class TaskListCard extends StatelessWidget {
         .updateTaskStatus(taskId: taskList.id!, status: status);
     if (res) {
       getStatusUpdate();
-      await _getTakStatusCount();
       await Get.find<TaskController>().getTakList(status);
+      await _getTakStatusCount();
       successToast(Messages.taskStatusSuccess);
       Get.back();
     } else {

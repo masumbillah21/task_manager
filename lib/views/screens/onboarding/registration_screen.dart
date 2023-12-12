@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_manager/controllers/auth_controller.dart';
+import 'package:task_manager/controllers/user_controller.dart';
 import 'package:task_manager/utility/messages.dart';
 import 'package:task_manager/utility/utilities.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
@@ -23,9 +23,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
 
-  Future<void> registration() async {
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _firstNameFocusNode = FocusNode();
+  final FocusNode _lastNameFocusNode = FocusNode();
+  final FocusNode _mobileFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+
+  Future<void> _registration() async {
     if (_formKey.currentState!.validate()) {
-      bool response = await Get.find<AuthController>().userRegistration(
+      bool response = await Get.find<UserController>().userRegistration(
         email: _emailTEController.text.trim(),
         firstName: _firstNameTEController.text.trim(),
         lastName: _lastNameTEController.text.trim(),
@@ -43,11 +49,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   void dispose() {
-    _emailTEController.clear();
-    _firstNameTEController.clear();
-    _lastNameTEController.clear();
-    _mobileTEController.clear();
-    _passwordTEController.clear();
+    _emailTEController.dispose();
+    _firstNameTEController.dispose();
+    _lastNameTEController.dispose();
+    _mobileTEController.dispose();
+    _passwordTEController.dispose();
+
+    _emailFocusNode.dispose();
+    _firstNameFocusNode.dispose();
+    _lastNameFocusNode.dispose();
+    _mobileFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -76,8 +88,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _emailTEController,
-                        decoration:
-                            const InputDecoration(label: Text("Email Address")),
+                        focusNode: _emailFocusNode,
+                        decoration: const InputDecoration(
+                          label: Text("Email Address"),
+                        ),
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context)
+                              .requestFocus(_firstNameFocusNode);
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredEmail;
@@ -92,8 +110,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _firstNameTEController,
-                        decoration:
-                            const InputDecoration(label: Text("First Name")),
+                        focusNode: _firstNameFocusNode,
+                        decoration: const InputDecoration(
+                          label: Text("First Name"),
+                        ),
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context)
+                              .requestFocus(_lastNameFocusNode);
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredFirstName;
@@ -106,8 +130,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _lastNameTEController,
+                        focusNode: _lastNameFocusNode,
                         decoration:
                             const InputDecoration(label: Text("Last Name")),
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(_mobileFocusNode);
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredLastName;
@@ -120,9 +148,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _mobileTEController,
+                        focusNode: _mobileFocusNode,
                         decoration:
                             const InputDecoration(label: Text("Mobile Number")),
                         keyboardType: TextInputType.number,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context)
+                              .requestFocus(_passwordFocusNode);
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredMobileNumber;
@@ -139,9 +172,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextFormField(
                         controller: _passwordTEController,
+                        focusNode: _passwordFocusNode,
                         decoration:
                             const InputDecoration(label: Text("Password")),
                         obscureText: true,
+                        onFieldSubmitted: (_) {
+                          _registration();
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return Messages.requiredPassword;
@@ -155,7 +192,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         height: 20,
                       ),
                       SizedBox(
-                        child: GetBuilder<AuthController>(builder: (auth) {
+                        child: GetBuilder<UserController>(builder: (auth) {
                           return Visibility(
                             visible: auth.inProgress == false,
                             replacement: const Center(
@@ -164,7 +201,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             child: ElevatedButton(
                               child: buttonChild(),
                               onPressed: () {
-                                registration();
+                                _registration();
                               },
                             ),
                           );

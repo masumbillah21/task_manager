@@ -6,6 +6,7 @@ import 'package:task_manager/controllers/photo_controller.dart';
 import 'package:task_manager/controllers/status_change_controller.dart';
 import 'package:task_manager/controllers/task_controller.dart';
 import 'package:task_manager/controllers/task_count_controller.dart';
+import 'package:task_manager/controllers/user_controller.dart';
 import 'package:task_manager/views/screens/bottom_navigation_screen.dart';
 import 'package:task_manager/views/screens/onboarding/email_verification_screen.dart';
 import 'package:task_manager/views/screens/onboarding/login_screen.dart';
@@ -117,6 +118,7 @@ class TaskManagerDependency extends Bindings {
   @override
   void dependencies() {
     Get.put(AuthController());
+    Get.put(UserController());
     Get.put(BottomNavigationController());
     Get.put(TaskController());
     Get.put(TaskCountController());
