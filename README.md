@@ -17,5 +17,6 @@ A Simple Task Manager Flutter project.
 ## Additional Functions
 - Api Integration
 - Getx for state management
+- Get Storage
 - Form Validation
 - Focus Node
